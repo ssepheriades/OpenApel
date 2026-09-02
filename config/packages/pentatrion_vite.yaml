@@ -1,0 +1,8 @@
+pentatrion_vite:
+    build_directory: 'build'
+    # Relative to kernel.project_dir: the bundle concatenates the two
+    # (`%kernel.project_dir%%pentatrion_vite.public_directory%`).
+    # An absolute path here made Symfony look for assets under
+    # /projects/OpenApel/projects/OpenApel/public and silently skip the tags.
+    public_directory: public
+    throw_on_missing_entry: true

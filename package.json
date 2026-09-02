@@ -1,0 +1,47 @@
+{
+    "name": "openapel-frontend",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "lint": "eslint . --ext .ts,.vue",
+        "lint:fix": "eslint . --ext .ts,.vue --fix",
+        "format": "prettier --write \"assets/**/*.{ts,vue,css,scss,json}\"",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6",
+        "@fortawesome/free-brands-svg-icons": "^6.7.2",
+        "@fortawesome/free-solid-svg-icons": "^6",
+        "@fortawesome/vue-fontawesome": "^3",
+        "@mdi/font": "^7.4.47",
+        "dompurify": "^3",
+        "markdown-it": "^14",
+        "pinia": "^3",
+        "vue": "^3",
+        "vue-router": "^4",
+        "vuetify": "^3"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9",
+        "@types/dompurify": "^3",
+        "@types/markdown-it": "^14",
+        "@typescript-eslint/eslint-plugin": "^8",
+        "@typescript-eslint/parser": "^8",
+        "@vitejs/plugin-vue": "^5",
+        "@vue/eslint-config-typescript": "^14",
+        "eslint": "^9",
+        "eslint-plugin-vue": "^9",
+        "jsdom": "^25",
+        "prettier": "^3",
+        "typescript": "^5",
+        "vite": "^6",
+        "vite-plugin-symfony": "^8.2.4",
+        "vite-plugin-vuetify": "^2",
+        "vitest": "^2",
+        "vue-tsc": "^2"
+    }
+}

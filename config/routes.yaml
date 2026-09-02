@@ -1,0 +1,12 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+api_platform:
+    resource: ./routes/api_platform.yaml
+
+admin:
+    resource: ./routes/admin.yaml
+
+easyadmin:
+    resource: ./routes/easyadmin.yaml

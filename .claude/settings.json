@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(rtk find *)",
+      "Bash(rtk grep *)",
+      "Bash(rtk read *)",
+      "Bash(php -v)",
+      "Bash(npm -v)",
+      "mcp__context7__query-docs",
+      "Bash(rtk curl *)",
+      "Bash(rtk ps *)",
+      "Bash(php bin/console make:migration)",
+      "Bash(php bin/console doctrine:migrations:migrate --no-interaction)",
+      "Bash(curl -s -b - \"http://localhost:8000/admin?crudAction=new&crudControllerFqcn=App%5CController%5CAdmin%5CEventCrudController\")",
+      "Bash(php bin/console doctrine:query:sql \"SELECT id, title, type, state FROM event WHERE id = 1\")",
+      "Bash(php bin/console cache:clear)",
+      "Bash(php bin/console config:dump-reference)",
+      "Bash(curl -s http://localhost:5173/)",
+      "mcp__context7__resolve-library-id",
+      "WebFetch(domain:vuetifyjs.com)",
+      "Bash(nohup npm run dev)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('viteServer:', d['viteServer']\\)\")",
+      "Bash(chromium --headless=new --disable-gpu --no-sandbox --virtual-time-budget=10000 --enable-logging=stderr --dump-dom http://localhost:8000/equipe)",
+      "Bash(rtk wc *)",
+      "Bash(rtk proxy *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\('vite-plugin-symfony:', require\\('/projects/OpenApel/node_modules/vite-plugin-symfony/package.json'\\).version\\)\")",
+      "Bash(pkill -f \"node /projects/OpenApel/node_modules/.bin/vite\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('/projects/OpenApel/public/build/.vite/entrypoints.json'\\)\\); print\\('viteServer:', d['viteServer'], '| version:', d['version'][0]\\)\")"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    csrf_protection: true
+    http_method_override: false
+    handle_all_throwables: true
+
+    cache:
+        app: cache.adapter.apcu
+        default_redis_provider: redis://localhost
+
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_httponly: true
+        cookie_samesite: lax
+        storage_factory_id: session.storage.factory.native
+
+    php_errors:
+        log: true
+
+    uid:
+        default_uuid_version: 7
