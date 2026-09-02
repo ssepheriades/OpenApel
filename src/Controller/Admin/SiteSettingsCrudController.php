@@ -96,6 +96,8 @@ final class SiteSettingsCrudController extends AbstractCrudController
 
         yield FormField::addFieldset('Contact & réseaux');
         yield EmailField::new('contactEmail', 'Email de contact');
+        yield BooleanField::new('contactEmailEnabled', 'Envoyer les emails de contact')
+            ->setHelp('Si désactivé, les messages du formulaire sont stockés en base mais aucun email n\'est envoyé.');
         yield UrlField::new('facebookUrl', 'Page Facebook');
         yield UrlField::new('instagramUrl', 'Compte Instagram');
 

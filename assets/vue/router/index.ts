@@ -45,6 +45,11 @@ const router = createRouter({
             component: () => import('@/pages/FaqPage.vue'),
             meta: { visibilityKey: 'faqVisible' },
         },
+        {
+            path: '/contact',
+            name: 'contact',
+            component: () => import('@/pages/ContactPage.vue'),
+        },
     ],
 });
 

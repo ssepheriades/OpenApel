@@ -15,6 +15,7 @@ const allNavItems: NavItem[] = [
     { label: 'Agenda', to: { name: 'agenda' }, icon: 'calendar-days' },
     { label: 'FAQ', to: { name: 'faq' }, icon: 'circle-question' },
     { label: 'Équipe', to: { name: 'team' }, icon: 'users' },
+    { label: 'Contact', to: { name: 'contact' }, icon: 'envelope' },
 ];
 
 const drawer = ref(false);

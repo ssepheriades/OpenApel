@@ -1,0 +1,15 @@
+<p>Nouveau message reçu via le formulaire de contact.</p>
+
+<ul>
+    <li><strong>Nom :</strong> {{ contact.name }}</li>
+    <li><strong>Email :</strong> {{ contact.email }}</li>
+    {% if contact.phone %}
+        <li><strong>Téléphone :</strong> {{ contact.phone }}</li>
+    {% endif %}
+    {% if contact.schoolClass %}
+        <li><strong>Classe :</strong> {{ contact.schoolClass }}</li>
+    {% endif %}
+    <li><strong>Sujet :</strong> {{ contact.subject }}</li>
+</ul>
+
+<p>{{ contact.message|nl2br }}</p>

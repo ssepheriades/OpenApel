@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use App\Controller\Admin\ContactMessageCrudController;
 use App\Controller\Admin\ContentThemeCrudController;
 use App\Controller\Admin\GradeCrudController;
 use App\Controller\Admin\SchoolClassCrudController;
+use App\Entity\ContactMessage;
 use App\Entity\ContentTheme;
 use App\Entity\Grade;
 use App\Entity\SchoolClass;
@@ -40,6 +42,7 @@ final class SchoolAdminCrudTest extends WebTestCase
             $this->entityManager->getClassMetadata(Grade::class),
             $this->entityManager->getClassMetadata(SchoolClass::class),
             $this->entityManager->getClassMetadata(ContentTheme::class),
+            $this->entityManager->getClassMetadata(ContactMessage::class),
         ];
         $schemaTool = new SchemaTool($this->entityManager);
 
@@ -65,6 +68,27 @@ final class SchoolAdminCrudTest extends WebTestCase
         self::assertSelectorTextContains('body', 'Classes');
         self::assertSelectorTextContains('body', 'Niveaux');
         self::assertSelectorTextContains('body', 'Thèmes');
+        self::assertSelectorTextContains('body', 'Messages');
+    }
+
+    public function testContactMessageCrudIndexIsReachableWithoutNewAction(): void
+    {
+        $this->loginAsAdmin();
+
+        $this->client->request('GET', '/admin', [
+            'crudAction' => 'index',
+            'crudControllerFqcn' => ContactMessageCrudController::class,
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Messages');
+
+        $this->client->request('GET', '/admin', [
+            'crudAction' => 'new',
+            'crudControllerFqcn' => ContactMessageCrudController::class,
+        ]);
+
+        self::assertGreaterThanOrEqual(400, $this->client->getResponse()->getStatusCode());
     }
 
     public function testGradeCrudIndexAndNewAreReachable(): void

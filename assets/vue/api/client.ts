@@ -7,9 +7,13 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+    const { headers: initHeaders, ...rest } = init ?? {};
     const response = await fetch(`${API_URL}${path}`, {
-        headers: { Accept: 'application/ld+json', ...init?.headers },
-        ...init,
+        ...rest,
+        headers: {
+            Accept: 'application/ld+json',
+            ...initHeaders,
+        },
     });
 
     if (!response.ok) {

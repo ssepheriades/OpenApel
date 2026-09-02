@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use App\Entity\ContactMessage;
+use App\Entity\Grade;
+use App\Entity\SchoolClass;
 use App\Entity\SiteSettings;
 use App\Entity\User;
 use Doctrine\DBAL\Exception as DbalException;
@@ -30,6 +33,10 @@ final class AdminAuthenticationTest extends WebTestCase
             $this->entityManager->getClassMetadata(User::class),
             // The login page renders site_settings(), which needs the singleton table.
             $this->entityManager->getClassMetadata(SiteSettings::class),
+            // The dashboard menu badges unprocessed contact messages.
+            $this->entityManager->getClassMetadata(Grade::class),
+            $this->entityManager->getClassMetadata(SchoolClass::class),
+            $this->entityManager->getClassMetadata(ContactMessage::class),
         ];
         $schemaTool = new SchemaTool($this->entityManager);
 

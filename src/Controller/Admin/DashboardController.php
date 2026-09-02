@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\ContactMessage;
 use App\Entity\ContentTheme;
 use App\Entity\Event;
 use App\Entity\Faq;
@@ -12,9 +13,11 @@ use App\Entity\Post;
 use App\Entity\SchoolClass;
 use App\Entity\SiteSettings;
 use App\Entity\User;
+use App\Repository\ContactMessageRepository;
 use App\Service\SiteSettingsProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +27,7 @@ class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         private readonly SiteSettingsProvider $settingsProvider,
+        private readonly ContactMessageRepository $contactMessageRepository,
     ) {
     }
 
@@ -55,6 +59,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Posts', 'fa fa-newspaper', Post::class);
         yield MenuItem::linkToCrud('FAQs', 'fa fa-question-circle', Faq::class);
         yield MenuItem::linkToCrud('Thèmes', 'fa fa-tags', ContentTheme::class);
+        yield MenuItem::section('Messages');
+        yield $this->contactMessagesMenuItem();
         yield MenuItem::section('École');
         yield MenuItem::linkToCrud('Classes', 'fa fa-chalkboard', SchoolClass::class);
         yield MenuItem::linkToCrud('Niveaux', 'fa fa-layer-group', Grade::class);
@@ -64,5 +70,16 @@ class DashboardController extends AbstractDashboardController
             ->setAction(Action::EDIT)
             ->setEntityId($this->settingsProvider->getEntity()->getId());
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
+    }
+
+    private function contactMessagesMenuItem(): CrudMenuItem
+    {
+        $item = MenuItem::linkToCrud('Messages', 'fa fa-envelope', ContactMessage::class);
+        $unprocessed = $this->contactMessageRepository->countUnprocessed();
+        if ($unprocessed > 0) {
+            $item->setBadge((string) $unprocessed, 'warning');
+        }
+
+        return $item;
     }
 }

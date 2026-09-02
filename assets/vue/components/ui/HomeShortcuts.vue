@@ -37,6 +37,12 @@ const allShortcuts: Shortcut[] = [
         to: { name: 'faq' },
         icon: 'circle-question',
     },
+    {
+        label: 'Contact',
+        description: "Écrire à l'association",
+        to: { name: 'contact' },
+        icon: 'envelope',
+    },
 ];
 
 const shortcuts = computed(() => allShortcuts.filter((shortcut) => appStore.isRouteVisible(shortcut.to.name)));

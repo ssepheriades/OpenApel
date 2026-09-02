@@ -71,6 +71,9 @@ class SiteSettings
     #[Assert\Length(max: 180)]
     private ?string $contactEmail = null;
 
+    #[ORM\Column]
+    private bool $contactEmailEnabled = true;
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Url(requireTld: true)]
     #[Assert\Length(max: 255)]
@@ -237,6 +240,18 @@ class SiteSettings
     public function setContactEmail(?string $contactEmail): self
     {
         $this->contactEmail = self::normalizeOptionalString($contactEmail);
+
+        return $this;
+    }
+
+    public function isContactEmailEnabled(): bool
+    {
+        return $this->contactEmailEnabled;
+    }
+
+    public function setContactEmailEnabled(bool $contactEmailEnabled): self
+    {
+        $this->contactEmailEnabled = $contactEmailEnabled;
 
         return $this;
     }

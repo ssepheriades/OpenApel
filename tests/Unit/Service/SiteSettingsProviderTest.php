@@ -48,6 +48,7 @@ final class SiteSettingsProviderTest extends TestCase
         self::assertTrue($view->teamVisible);
         self::assertTrue($view->postsVisible);
         self::assertTrue($view->agendaVisible);
+        self::assertTrue($view->contactEmailEnabled);
         self::assertNull($view->baseline);
         self::assertNull($view->homeTitle);
         self::assertNull($view->homeText);
