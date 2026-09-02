@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Faq;
-use App\Enum\ContentTheme;
 use App\Enum\FaqVisibility;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -35,8 +34,7 @@ final class FaqCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn): Faq
     {
         return (new Faq())
-            ->setVisibility(FaqVisibility::Visible)
-            ->setTheme(ContentTheme::Autre);
+            ->setVisibility(FaqVisibility::Visible);
     }
 
     public function configureFields(string $pageName): iterable
@@ -44,13 +42,8 @@ final class FaqCrudController extends AbstractCrudController
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('question', 'Question');
         yield TextareaField::new('answer', 'Réponse')->hideOnIndex();
-        yield ChoiceField::new('theme', 'Thème')
-            ->setChoices(
-                array_combine(
-                    array_map(fn (ContentTheme $theme) => $theme->label(), ContentTheme::cases()),
-                    ContentTheme::cases(),
-                )
-            );
+        yield AssociationField::new('theme', 'Thème')
+            ->autocomplete();
         yield ChoiceField::new('visibility', 'Visibilité')
             ->setChoices(
                 array_combine(

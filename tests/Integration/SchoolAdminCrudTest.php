@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use App\Controller\Admin\ContentThemeCrudController;
 use App\Controller\Admin\GradeCrudController;
 use App\Controller\Admin\SchoolClassCrudController;
+use App\Entity\ContentTheme;
 use App\Entity\Grade;
 use App\Entity\SchoolClass;
 use App\Entity\SiteSettings;
@@ -37,6 +39,7 @@ final class SchoolAdminCrudTest extends WebTestCase
             $this->entityManager->getClassMetadata(SiteSettings::class),
             $this->entityManager->getClassMetadata(Grade::class),
             $this->entityManager->getClassMetadata(SchoolClass::class),
+            $this->entityManager->getClassMetadata(ContentTheme::class),
         ];
         $schemaTool = new SchemaTool($this->entityManager);
 
@@ -61,6 +64,7 @@ final class SchoolAdminCrudTest extends WebTestCase
         self::assertSelectorTextContains('body', 'École');
         self::assertSelectorTextContains('body', 'Classes');
         self::assertSelectorTextContains('body', 'Niveaux');
+        self::assertSelectorTextContains('body', 'Thèmes');
     }
 
     public function testGradeCrudIndexAndNewAreReachable(): void
@@ -82,6 +86,29 @@ final class SchoolAdminCrudTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('input[name$="[name]"]');
+        self::assertSelectorExists('input[name$="[weight]"]');
+    }
+
+    public function testContentThemeCrudIndexAndNewAreReachable(): void
+    {
+        $this->loginAsAdmin();
+
+        $this->client->request('GET', '/admin', [
+            'crudAction' => 'index',
+            'crudControllerFqcn' => ContentThemeCrudController::class,
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Thèmes');
+
+        $this->client->request('GET', '/admin', [
+            'crudAction' => 'new',
+            'crudControllerFqcn' => ContentThemeCrudController::class,
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('input[name$="[name]"]');
+        self::assertSelectorExists('input[name$="[icon]"]');
         self::assertSelectorExists('input[name$="[weight]"]');
     }
 

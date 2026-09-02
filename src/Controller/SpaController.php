@@ -13,7 +13,7 @@ final class SpaController extends AbstractController
     #[Route(
         '/{reactRouting}',
         name: 'spa_index',
-        requirements: ['reactRouting' => '^(?!admin|api).+'],
+        requirements: ['reactRouting' => '^(?!admin|api|build|bundles|uploads|media).+'],
         defaults: ['reactRouting' => null],
         priority: -1,
     )]

@@ -2,13 +2,14 @@
 import { computed, onMounted, ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fetchPosts, type Post } from '@/api/posts';
-import { CONTENT_THEMES, THEME_ICONS, THEME_LABELS, type ContentTheme } from '@/api/themes';
+import { fetchContentThemes, type ContentTheme } from '@/api/themes';
 import PageHero from '@/components/ui/PageHero.vue';
 import PostCard from '@/components/ui/PostCard.vue';
 
-type ThemeFilter = 'all' | ContentTheme;
+type ThemeFilter = 'all' | number;
 
 const posts = ref<Post[]>([]);
+const themes = ref<ContentTheme[]>([]);
 const selectedTheme = ref<ThemeFilter>('all');
 const isLoading = ref(true);
 const error = ref<string | null>(null);
@@ -18,12 +19,19 @@ const filteredPosts = computed(() => {
         return posts.value;
     }
 
-    return posts.value.filter((post) => post.theme === selectedTheme.value);
+    const themeId = Number(selectedTheme.value);
+
+    return posts.value.filter((post) => post.theme.id === themeId);
 });
 
 onMounted(async () => {
     try {
-        posts.value = await fetchPosts();
+        const [loadedPosts, loadedThemes] = await Promise.all([
+            fetchPosts(),
+            fetchContentThemes(),
+        ]);
+        posts.value = loadedPosts;
+        themes.value = loadedThemes;
     } catch {
         error.value = 'Impossible de charger les actualités pour le moment.';
     } finally {
@@ -56,14 +64,14 @@ onMounted(async () => {
                 <v-chip-group v-model="selectedTheme" class="mb-8" mandatory selected-class="text-primary">
                     <v-chip value="all" filter variant="outlined">Tous</v-chip>
                     <v-chip
-                        v-for="theme in CONTENT_THEMES"
-                        :key="theme"
-                        :value="theme"
+                        v-for="theme in themes"
+                        :key="theme.id"
+                        :value="theme.id"
                         filter
                         variant="outlined"
-                        :prepend-icon="THEME_ICONS[theme]"
+                        :prepend-icon="theme.icon"
                     >
-                        {{ THEME_LABELS[theme] }}
+                        {{ theme.name }}
                     </v-chip>
                 </v-chip-group>
 

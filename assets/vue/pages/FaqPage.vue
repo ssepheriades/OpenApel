@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fetchFaqs, type Faq } from '@/api/faqs';
-import { THEME_LABELS } from '@/api/themes';
 import FaqAccordionItem from '@/components/ui/FaqAccordionItem.vue';
 import PageHero from '@/components/ui/PageHero.vue';
 
@@ -29,7 +28,7 @@ const filteredFaqs = computed(() => {
             ...(faq.grades ?? []).map((grade) => grade.name),
             ...(faq.schoolClasses ?? []).map((schoolClass) => schoolClass.name),
         ].join(' ');
-        const haystack = `${faq.question} ${faq.answer} ${THEME_LABELS[faq.theme]} ${audienceNames}`;
+        const haystack = `${faq.question} ${faq.answer} ${faq.theme.name} ${audienceNames}`;
 
         return normalize(haystack).includes(needle);
     });

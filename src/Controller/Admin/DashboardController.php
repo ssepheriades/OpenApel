@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\ContentTheme;
 use App\Entity\Event;
 use App\Entity\Faq;
 use App\Entity\Grade;
@@ -53,6 +54,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Events', 'fa fa-calendar', Event::class);
         yield MenuItem::linkToCrud('Posts', 'fa fa-newspaper', Post::class);
         yield MenuItem::linkToCrud('FAQs', 'fa fa-question-circle', Faq::class);
+        yield MenuItem::linkToCrud('Thèmes', 'fa fa-tags', ContentTheme::class);
         yield MenuItem::section('École');
         yield MenuItem::linkToCrud('Classes', 'fa fa-chalkboard', SchoolClass::class);
         yield MenuItem::linkToCrud('Niveaux', 'fa fa-layer-group', Grade::class);

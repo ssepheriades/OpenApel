@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { THEME_ICONS, THEME_LABELS, type ContentTheme } from '@/api/themes';
+import type { ContentTheme } from '@/api/themes';
 
 defineProps<{
     theme: ContentTheme;
@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-    <v-chip size="small" variant="tonal" color="primary" :prepend-icon="THEME_ICONS[theme]">
-        {{ THEME_LABELS[theme] }}
+    <v-chip size="small" variant="tonal" color="primary" :prepend-icon="theme.icon">
+        {{ theme.name }}
     </v-chip>
 </template>

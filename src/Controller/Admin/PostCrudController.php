@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Post;
-use App\Enum\ContentTheme;
 use App\Enum\PostState;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -38,13 +37,8 @@ final class PostCrudController extends AbstractCrudController
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('title', 'Titre');
         yield TextareaField::new('content', 'Contenu')->hideOnIndex();
-        yield ChoiceField::new('theme', 'Thème')
-            ->setChoices(
-                array_combine(
-                    array_map(fn (ContentTheme $theme) => $theme->label(), ContentTheme::cases()),
-                    ContentTheme::cases(),
-                )
-            );
+        yield AssociationField::new('theme', 'Thème')
+            ->autocomplete();
         yield AssociationField::new('author', 'Auteur');
         yield ChoiceField::new('state', 'État')
             ->setChoices(
@@ -70,8 +64,7 @@ final class PostCrudController extends AbstractCrudController
     {
         return (new Post())
             ->setViewCount(0)
-            ->setState(PostState::Draft)
-            ->setTheme(ContentTheme::Autre);
+            ->setState(PostState::Draft);
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void

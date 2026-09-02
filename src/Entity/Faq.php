@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\Enum\ContentTheme;
 use App\Enum\FaqVisibility;
 use App\Repository\FaqRepository;
 use App\Validator\Constraints\ExclusiveGradeOrClass;
@@ -21,14 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FaqRepository::class)]
 #[ORM\Index(name: 'idx_faq_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_faq_visibility', columns: ['visibility'])]
-#[ORM\Index(name: 'idx_faq_theme', columns: ['theme'])]
+#[ORM\Index(name: 'idx_faq_theme', columns: ['theme_id'])]
 #[ORM\HasLifecycleCallbacks]
 #[ExclusiveGradeOrClass]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['faq:read', 'audience:read']]),
+        new Get(normalizationContext: ['groups' => ['faq:read', 'audience:read', 'theme:read']]),
         new GetCollection(
-            normalizationContext: ['groups' => ['faq:read', 'audience:read']],
+            normalizationContext: ['groups' => ['faq:read', 'audience:read', 'theme:read']],
             order: ['createdAt' => 'DESC'],
             paginationEnabled: false,
         ),
@@ -60,10 +59,11 @@ class Faq implements AudienceTargetedInterface
     #[Assert\NotNull]
     private FaqVisibility $visibility = FaqVisibility::Visible;
 
-    #[ORM\Column(length: 32, enumType: ContentTheme::class)]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     #[Assert\NotNull]
     #[Groups(['faq:read'])]
-    private ContentTheme $theme = ContentTheme::Autre;
+    private ?ContentTheme $theme = null;
 
     #[ORM\Column]
     #[Groups(['faq:read'])]
@@ -115,7 +115,7 @@ class Faq implements AudienceTargetedInterface
         return $this;
     }
 
-    public function getTheme(): ContentTheme
+    public function getTheme(): ?ContentTheme
     {
         return $this->theme;
     }

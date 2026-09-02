@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\Enum\ContentTheme;
 use App\Enum\PostState;
 use App\Repository\PostRepository;
 use App\Validator\Constraints\ExclusiveGradeOrClass;
@@ -19,14 +18,14 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-#[ORM\Index(name: 'idx_post_theme', columns: ['theme'])]
+#[ORM\Index(name: 'idx_post_theme', columns: ['theme_id'])]
 #[ORM\Index(name: 'idx_post_state', columns: ['state'])]
 #[ExclusiveGradeOrClass]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['post:read', 'audience:read']]),
+        new Get(normalizationContext: ['groups' => ['post:read', 'audience:read', 'theme:read']]),
         new GetCollection(
-            normalizationContext: ['groups' => ['post:read', 'audience:read']],
+            normalizationContext: ['groups' => ['post:read', 'audience:read', 'theme:read']],
             order: ['createdAt' => 'DESC'],
             paginationEnabled: false,
         ),
@@ -72,10 +71,11 @@ class Post implements AudienceTargetedInterface
     #[Assert\NotNull]
     private PostState $state = PostState::Draft;
 
-    #[ORM\Column(length: 32, enumType: ContentTheme::class)]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     #[Assert\NotNull]
     #[Groups(['post:read'])]
-    private ContentTheme $theme = ContentTheme::Autre;
+    private ?ContentTheme $theme = null;
 
     public function __construct()
     {
@@ -171,7 +171,7 @@ class Post implements AudienceTargetedInterface
         return $this;
     }
 
-    public function getTheme(): ContentTheme
+    public function getTheme(): ?ContentTheme
     {
         return $this->theme;
     }
