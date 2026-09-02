@@ -50,10 +50,9 @@ final readonly class ContactMessageResource
         #[Groups(['contact:write'])]
         #[Assert\Positive]
         public ?int $schoolClassId = null,
-        // Honeypot: real users leave this empty.
         #[ApiProperty(readable: false, writable: true)]
         #[Groups(['contact:write'])]
-        public ?string $website = null,
+        public ?string $hp = null,
         #[Groups(['contact:read'])]
         public bool $ok = true,
     ) {

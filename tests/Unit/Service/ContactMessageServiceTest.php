@@ -110,7 +110,7 @@ final class ContactMessageServiceTest extends TestCase
         $this->entityManager->expects(self::never())->method('flush');
         $this->mailer->expects(self::never())->method('send');
 
-        $this->service()->submit($this->input(website: 'https://spam.example'));
+        $this->service()->submit($this->input(hp: 'http://spam.example'));
     }
 
     public function testSubmitLogsMailFailureAfterPersist(): void
@@ -142,7 +142,7 @@ final class ContactMessageServiceTest extends TestCase
     private function input(
         ?int $schoolClassId = null,
         ?string $phone = null,
-        ?string $website = null,
+        ?string $hp = null,
     ): ContactMessageResource {
         return new ContactMessageResource(
             name: 'Marie Dupont',
@@ -151,7 +151,7 @@ final class ContactMessageServiceTest extends TestCase
             subject: 'Question cantine',
             message: 'Comment ça se passe ?',
             schoolClassId: $schoolClassId,
-            website: $website,
+            hp: $hp,
         );
     }
 }

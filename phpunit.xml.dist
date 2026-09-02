@@ -35,5 +35,6 @@
         <env name="KERNEL_CLASS" value="App\Kernel" />
         <env name="DATABASE_URL" value="postgresql://app:changeme@127.0.0.1:5432/app_test?serverVersion=17&amp;charset=utf8" />
         <env name="DEFAULT_URI" value="http://localhost" />
+        <env name="MAILER_DSN" value="null://null" />
     </php>
 </phpunit>

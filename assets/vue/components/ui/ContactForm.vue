@@ -12,7 +12,7 @@ const phone = ref('');
 const subject = ref('');
 const message = ref('');
 const schoolClassId = ref<number | null>(null);
-const website = ref('');
+const hp = ref('');
 const schoolClasses = ref<SchoolClass[]>([]);
 const classesLoading = ref(false);
 const isSubmitting = ref(false);
@@ -60,12 +60,14 @@ async function onSubmit(): Promise<void> {
             subject: subject.value.trim(),
             message: message.value.trim(),
             schoolClassId: schoolClassId.value,
-            website: website.value,
+            ...(hp.value.trim() === '' ? {} : { hp: hp.value }),
         });
         submitted.value = true;
     } catch (caught) {
         if (caught instanceof ApiError && caught.status === 422) {
             error.value = 'Vérifiez les champs saisis.';
+        } else if (caught instanceof ApiError && caught.status === 429) {
+            error.value = 'Trop de messages envoyés. Réessayez dans quelques minutes.';
         } else {
             error.value = "Impossible d'envoyer le message pour le moment.";
         }
@@ -90,12 +92,14 @@ async function onSubmit(): Promise<void> {
         <v-card-text class="pa-6 pa-sm-8">
             <v-alert v-if="error" type="error" variant="tonal" :text="error" class="mb-6" closable></v-alert>
 
-            <v-form ref="form" @submit.prevent="onSubmit">
-                <input v-model="website" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="contact-form__honeypot" />
+            <v-form ref="form" autocomplete="on" @submit.prevent="onSubmit">
+                <!-- Honeypot: type=hidden so identity/form fillers skip it. Not named website/url/email. -->
+                <input v-model="hp" type="hidden" name="hp" autocomplete="off" tabindex="-1" />
 
                 <v-text-field
                     v-model="name"
                     label="Nom et prénom"
+                    autocomplete="name"
                     variant="outlined"
                     :rules="[requiredRule('Le nom'), maxLengthRule(180)]"
                     class="mb-2"
@@ -109,6 +113,7 @@ async function onSubmit(): Promise<void> {
                     v-model="email"
                     label="Email"
                     type="email"
+                    autocomplete="email"
                     variant="outlined"
                     :rules="[emailRule, maxLengthRule(180)]"
                     class="mb-2"
@@ -122,6 +127,7 @@ async function onSubmit(): Promise<void> {
                     v-model="phone"
                     label="Téléphone (optionnel)"
                     type="tel"
+                    autocomplete="tel"
                     variant="outlined"
                     :rules="[maxLengthRule(40)]"
                     class="mb-2"
@@ -134,6 +140,7 @@ async function onSubmit(): Promise<void> {
                 <v-text-field
                     v-model="subject"
                     label="Sujet"
+                    autocomplete="off"
                     variant="outlined"
                     :rules="[requiredRule('Le sujet'), maxLengthRule(255)]"
                     class="mb-2"
@@ -186,5 +193,4 @@ async function onSubmit(): Promise<void> {
 <style scoped>
 .contact-form { max-width: 640px; margin: 0 auto; border-radius: 16px !important; }
 .contact-form__success-icon { font-size: 2.5rem; color: rgb(var(--v-theme-primary)); }
-.contact-form__honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 </style>

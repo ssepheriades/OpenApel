@@ -17,6 +17,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 final class ContactMessageApiTest extends WebTestCase
 {
@@ -50,6 +51,7 @@ final class ContactMessageApiTest extends WebTestCase
         }
 
         static::getContainer()->get(SiteSettingsProvider::class)->invalidate();
+        $this->resetContactLimiter();
     }
 
     public function testPostCreatesMessageAndSendsEmail(): void
@@ -129,7 +131,7 @@ final class ContactMessageApiTest extends WebTestCase
                 'email' => 'bot@example.org',
                 'subject' => 'Spam',
                 'message' => 'Buy now',
-                'website' => 'https://spam.example',
+                'hp' => 'http://spam.example',
             ], JSON_THROW_ON_ERROR),
         );
 
@@ -146,6 +148,65 @@ final class ContactMessageApiTest extends WebTestCase
             $this->client->getResponse()->getStatusCode() >= 400,
             'Public listing of contact messages must not be allowed.',
         );
+    }
+
+    public function testSixthPostIsRateLimited(): void
+    {
+        $payload = json_encode([
+            'name' => 'Marie Dupont',
+            'email' => 'marie@example.org',
+            'subject' => 'Question',
+            'message' => 'Bonjour',
+        ], JSON_THROW_ON_ERROR);
+
+        for ($i = 0; $i < 5; ++$i) {
+            $this->client->request(
+                'POST',
+                '/api/contact_messages',
+                server: [
+                    'CONTENT_TYPE' => 'application/json',
+                    'HTTP_ACCEPT' => 'application/json',
+                ],
+                content: $payload,
+            );
+            self::assertResponseStatusCodeSame(201);
+        }
+
+        $this->client->request(
+            'POST',
+            '/api/contact_messages',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+            ],
+            content: $payload,
+        );
+
+        self::assertResponseStatusCodeSame(429);
+        self::assertTrue($this->client->getResponse()->headers->has('Retry-After'));
+    }
+
+    public function testCrossOriginDoesNotReceiveAllowOriginHeader(): void
+    {
+        $this->client->request(
+            'OPTIONS',
+            '/api/contact_messages',
+            server: [
+                'HTTP_ORIGIN' => 'https://evil.example',
+                'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'POST',
+                'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'content-type',
+            ],
+        );
+
+        self::assertFalse($this->client->getResponse()->headers->has('Access-Control-Allow-Origin'));
+    }
+
+    private function resetContactLimiter(): void
+    {
+        $limiter = static::getContainer()->get('limiter.contact_form');
+        self::assertInstanceOf(RateLimiterFactoryInterface::class, $limiter);
+        $limiter->create('127.0.0.1')->reset();
+        $limiter->create('unknown')->reset();
     }
 
     private function configureContactEmail(string $email): void

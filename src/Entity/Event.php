@@ -8,7 +8,6 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Enum\EventState;
 use App\Enum\EventType;
@@ -26,7 +25,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ExclusiveGradeOrClass]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['event:read', 'audience:read']]),
         new GetCollection(
             normalizationContext: ['groups' => ['event:read', 'audience:read']],
             order: ['startsAt' => 'ASC'],

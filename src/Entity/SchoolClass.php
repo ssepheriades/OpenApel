@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\SchoolClassRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -12,7 +13,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SchoolClassRepository::class)]
 #[ORM\Index(name: 'idx_school_class_grade', columns: ['grade_id'])]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['audience:read']],
+            paginationEnabled: false,
+        ),
+    ],
+)]
 class SchoolClass
 {
     #[ORM\Id]

@@ -7,7 +7,7 @@ export interface ContactMessagePayload {
     subject: string;
     message: string;
     schoolClassId: number | null;
-    website: string;
+    hp?: string;
 }
 
 export interface ContactMessageResponse {

@@ -21,7 +21,6 @@ describe('submitContactMessage', () => {
             subject: 'Question cantine',
             message: 'Comment ça se passe ?',
             schoolClassId: 3,
-            website: '',
         };
         mockedRequest.mockResolvedValue({ ok: true });
 

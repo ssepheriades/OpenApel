@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Doctrine;
 
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use App\Entity\Event;
 use App\Enum\EventVisibility;
 use Doctrine\ORM\QueryBuilder;
 
-final class EventVisibilityExtension implements QueryCollectionExtensionInterface
+final class EventVisibilityExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     public function applyToCollection(
         QueryBuilder $queryBuilder,
@@ -20,6 +21,22 @@ final class EventVisibilityExtension implements QueryCollectionExtensionInterfac
         ?Operation $operation = null,
         array $context = [],
     ): void {
+        $this->restrictToPublicVisibilities($queryBuilder, $resourceClass);
+    }
+
+    public function applyToItem(
+        QueryBuilder $queryBuilder,
+        QueryNameGeneratorInterface $queryNameGenerator,
+        string $resourceClass,
+        array $identifiers,
+        ?Operation $operation = null,
+        array $context = [],
+    ): void {
+        $this->restrictToPublicVisibilities($queryBuilder, $resourceClass);
+    }
+
+    private function restrictToPublicVisibilities(QueryBuilder $queryBuilder, string $resourceClass): void
+    {
         if (Event::class !== $resourceClass) {
             return;
         }

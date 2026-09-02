@@ -36,7 +36,7 @@ final readonly class ContactMessageService
 
     public function submit(ContactMessageResource $input): void
     {
-        if ($this->isHoneypotFilled($input->website)) {
+        if (null !== $input->hp && '' !== trim($input->hp)) {
             return;
         }
 
@@ -108,11 +108,6 @@ final readonly class ContactMessageService
                 'contactMessageId' => $contactMessage->getId(),
             ]);
         }
-    }
-
-    private function isHoneypotFilled(?string $website): bool
-    {
-        return null !== $website && '' !== trim($website);
     }
 
     private function normalizeOptional(?string $value): ?string

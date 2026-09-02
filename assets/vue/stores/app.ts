@@ -16,7 +16,7 @@ const ROUTE_VISIBILITY: Record<string, PageVisibilityKey> = {
 };
 
 export const useAppStore = defineStore('app', () => {
-    const apiUrl = ref<string>(import.meta.env.VITE_API_URL ?? '');
+    const apiUrl = ref<string>(import.meta.env.VITE_API_URL || '/api');
 
     const settings = ref<SiteSettings | null>(null);
     const settingsLoading = ref(false);
