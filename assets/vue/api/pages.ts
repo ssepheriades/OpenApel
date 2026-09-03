@@ -34,7 +34,7 @@ export const PAGE_DEFAULTS: Record<PageSlug, Omit<SitePage, 'slug' | 'kind'>> = 
         visible: true,
     },
     faq: { title: 'FAQ', subtitle: 'Les questions les plus fréquentes des familles', body: null, visible: true },
-    team: { title: 'Votre Équipe APEL', subtitle: null, body: null, visible: true },
+    team: { title: 'Équipe', subtitle: null, body: null, visible: true },
     contact: {
         title: 'Contact',
         subtitle: 'Une question ? Écrivez-nous, nous vous répondrons dès que possible.',

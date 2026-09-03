@@ -55,4 +55,9 @@ final class PageSlugTest extends TestCase
         self::assertFalse(PageSlug::Home->usesVisibility());
         self::assertFalse(PageSlug::Contact->usesVisibility());
     }
+
+    public function testTeamDefaultTitleIsNeutral(): void
+    {
+        self::assertSame('Équipe', PageSlug::Team->defaultTitle());
+    }
 }

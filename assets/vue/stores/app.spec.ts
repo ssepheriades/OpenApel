@@ -39,7 +39,7 @@ const samplePages: SitePage[] = [
     { slug: 'news', kind: 'section', title: 'Actualités', subtitle: "Les nouvelles de l'association", body: null, visible: true },
     { slug: 'agenda', kind: 'section', title: 'Agenda', subtitle: 'Les dates', body: null, visible: true },
     { slug: 'faq', kind: 'section', title: 'FAQ', subtitle: 'Les questions', body: null, visible: true },
-    { slug: 'team', kind: 'section', title: 'Votre Équipe APEL', subtitle: null, body: null, visible: true },
+    { slug: 'team', kind: 'section', title: 'Le bureau', subtitle: null, body: null, visible: true },
     { slug: 'contact', kind: 'section', title: 'Contact', subtitle: 'Écrivez-nous', body: null, visible: true },
     { slug: 'mentions-legales', kind: 'document', title: 'Mentions légales', subtitle: null, body: 'Éditeur.', visible: true },
     {
@@ -72,6 +72,8 @@ describe('useAppStore', () => {
         expect(store.settings).toBeNull();
         expect(store.pageContent('home').title).toBe(DEFAULT_SITE_NAME);
         expect(store.pageContent('home').body).toBeNull();
+        expect(store.pageContent('team').title).toBe('Équipe');
+        expect(store.pageForRoute('team')?.title).toBe('Équipe');
     });
 
     it('loads settings, applies theme colors and document title', async () => {
@@ -90,6 +92,7 @@ describe('useAppStore', () => {
         expect(store.baseline).toBe('Ensemble pour nos enfants');
         expect(store.pageContent('home').title).toBe("Bienvenue à l'école");
         expect(store.pageContent('home').body).toBe('**Ensemble** pour nos enfants.');
+        expect(store.pageForRoute('team')?.title).toBe('Le bureau');
         expect(document.title).toBe('APEL Démo');
         expect(theme.theme.themes.value.light.colors).toMatchObject({
             primary: '#123456',
@@ -147,6 +150,7 @@ describe('useAppStore', () => {
 
         expect(store.pagesError).toBe('pages down');
         expect(store.pageContent('faq').title).toBe('FAQ');
+        expect(store.pageContent('team').title).toBe('Équipe');
         expect(store.pageContent('contact').subtitle).toContain('Écrivez-nous');
         expect(store.documentPages).toHaveLength(2);
     });

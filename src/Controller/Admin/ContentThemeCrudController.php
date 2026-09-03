@@ -36,7 +36,7 @@ final class ContentThemeCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('name', 'Nom')
-            ->setHelp('Ex: Pastorale, APEL, Sport');
+            ->setHelp('Ex: Association, Sport');
         yield TextField::new('icon', 'Icône')
             ->setHelp('Nom d’icône Material Design Icons, ex: mdi-school. Catalogue : https://pictogrammers.com/library/mdi/');
         yield IntegerField::new('weight', 'Ordre')

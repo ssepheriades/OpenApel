@@ -22,7 +22,22 @@ const drawer = ref(false);
 
 const appStore = useAppStore();
 const logoUrl = computed(() => appStore.settings?.logoUrl ?? null);
-const navItems = computed(() => allNavItems.filter((item) => appStore.isRouteVisible(item.to.name)));
+const navItems = computed(() =>
+    allNavItems
+        .filter((item) => appStore.isRouteVisible(item.to.name))
+        .map((item) => {
+            if (item.to.name === 'home') {
+                return item;
+            }
+
+            const title = appStore.pageForRoute(item.to.name)?.title.trim();
+
+            return {
+                ...item,
+                label: title || item.label,
+            };
+        }),
+);
 </script>
 
 <template>
@@ -42,7 +57,7 @@ const navItems = computed(() => allNavItems.filter((item) => appStore.isRouteVis
         <nav class="d-none d-sm-flex">
             <v-btn
                 v-for="item in navItems"
-                :key="item.label"
+                :key="item.to.name"
                 :to="item.to"
                 variant="text"
             >
@@ -56,7 +71,7 @@ const navItems = computed(() => allNavItems.filter((item) => appStore.isRouteVis
         <v-list nav>
             <v-list-item
                 v-for="item in navItems"
-                :key="item.label"
+                :key="item.to.name"
                 :to="item.to"
                 :title="item.label"
                 @click="drawer = false"

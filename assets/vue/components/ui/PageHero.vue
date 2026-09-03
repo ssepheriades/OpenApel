@@ -18,7 +18,12 @@ defineProps<{
 
 <style scoped>
 .hero-header {
-    background: linear-gradient(135deg, #272857 0%, #2ed8ff 100%);
+    background: linear-gradient(
+        118deg,
+        rgb(var(--v-theme-primary)) 0%,
+        rgb(var(--v-theme-primary)) 42%,
+        rgb(var(--v-theme-secondary)) 100%
+    );
     color: white;
     padding: 80px 0;
     position: relative;

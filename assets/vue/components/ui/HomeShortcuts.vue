@@ -45,24 +45,16 @@ const allShortcuts: Shortcut[] = [
     },
 ];
 
-const SHORTCUT_PAGE_SLUG: Record<string, 'news' | 'team' | 'agenda' | 'faq' | 'contact'> = {
-    news: 'news',
-    team: 'team',
-    agenda: 'agenda',
-    faq: 'faq',
-    contact: 'contact',
-};
-
 const shortcuts = computed(() =>
     allShortcuts
         .filter((shortcut) => appStore.isRouteVisible(shortcut.to.name))
         .map((shortcut) => {
-            const slug = SHORTCUT_PAGE_SLUG[shortcut.to.name];
-            const chapo = slug ? appStore.pageContent(slug).subtitle : null;
+            const page = appStore.pageForRoute(shortcut.to.name);
 
             return {
                 ...shortcut,
-                description: chapo?.trim() || shortcut.description,
+                label: page?.title.trim() || shortcut.label,
+                description: page?.subtitle?.trim() || shortcut.description,
             };
         }),
 );
@@ -72,7 +64,7 @@ const shortcuts = computed(() =>
     <nav class="home-shortcuts" aria-label="Rubriques du site">
         <router-link
             v-for="shortcut in shortcuts"
-            :key="shortcut.label"
+            :key="shortcut.to.name"
             :to="shortcut.to"
             class="home-shortcut"
         >

@@ -66,7 +66,7 @@ enum PageSlug: string
             self::News => 'Actualités',
             self::Agenda => 'Agenda',
             self::Faq => 'FAQ',
-            self::Team => 'Votre Équipe APEL',
+            self::Team => 'Équipe',
             self::Contact => 'Contact',
             self::MentionsLegales => 'Mentions légales',
             self::PolitiqueDeConfidentialite => 'Politique de confidentialité',

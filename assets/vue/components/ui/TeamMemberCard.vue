@@ -46,14 +46,14 @@ defineProps<{ member: TeamMember }>();
     background: white;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    border: 1px solid rgba(39, 40, 87, 0.08);
+    border: 1px solid rgba(var(--v-theme-primary), 0.08);
     width: 100%;
     height: 100%;
 }
 
 .material-card:hover {
     transform: translateY(-12px);
-    box-shadow: 0 20px 40px rgba(39, 40, 87, 0.2), 0 8px 16px rgba(46, 216, 255, 0.12) !important;
+    box-shadow: 0 20px 40px rgba(var(--v-theme-primary), 0.2), 0 8px 16px rgba(var(--v-theme-secondary), 0.12) !important;
 }
 
 .card-image-container {
@@ -61,7 +61,12 @@ defineProps<{ member: TeamMember }>();
     width: 100%;
     height: 280px;
     overflow: hidden;
-    background: linear-gradient(135deg, #272857 0%, #2ed8ff 100%);
+    background: linear-gradient(
+        118deg,
+        rgb(var(--v-theme-primary)) 0%,
+        rgb(var(--v-theme-primary)) 42%,
+        rgb(var(--v-theme-secondary)) 100%
+    );
 }
 
 .card-image {
@@ -78,7 +83,12 @@ defineProps<{ member: TeamMember }>();
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #272857 0%, #2ed8ff 100%);
+    background: linear-gradient(
+        118deg,
+        rgb(var(--v-theme-primary)) 0%,
+        rgb(var(--v-theme-primary)) 42%,
+        rgb(var(--v-theme-secondary)) 100%
+    );
 }
 
 .card-overlay {
@@ -87,7 +97,7 @@ defineProps<{ member: TeamMember }>();
     left: 0;
     right: 0;
     height: 100px;
-    background: linear-gradient(to top, rgba(39, 40, 87, 0.4), transparent);
+    background: linear-gradient(to top, rgba(var(--v-theme-primary), 0.4), transparent);
     pointer-events: none;
 }
 
@@ -96,7 +106,7 @@ defineProps<{ member: TeamMember }>();
     bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #2ed8ff;
+    background-color: rgb(var(--v-theme-secondary));
     color: white;
     padding: 6px 16px;
     border-radius: 20px;
@@ -120,14 +130,14 @@ defineProps<{ member: TeamMember }>();
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #272857;
+    color: rgb(var(--v-theme-primary));
     letter-spacing: 0.3px;
     line-height: 1.4;
 }
 
 .card-lastname {
     display: block;
-    color: #2ed8ff;
+    color: rgb(var(--v-theme-secondary));
     font-weight: 700;
     letter-spacing: 0.5px;
     margin-top: 2px;
