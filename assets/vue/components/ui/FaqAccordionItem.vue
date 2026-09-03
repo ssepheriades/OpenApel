@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Faq } from '@/api/faqs';
 import AudienceChips from '@/components/ui/AudienceChips.vue';
+import MarkdownContent from '@/components/ui/MarkdownContent.vue';
 import ThemeChip from '@/components/ui/ThemeChip.vue';
 
 defineProps<{ faq: Faq }>();
@@ -18,7 +19,7 @@ defineProps<{ faq: Faq }>();
             </div>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-            <p class="faq-answer">{{ faq.answer }}</p>
+            <MarkdownContent :source="faq.answer" />
         </v-expansion-panel-text>
     </v-expansion-panel>
 </template>
@@ -44,10 +45,5 @@ defineProps<{ faq: Faq }>();
     flex-wrap: wrap;
     align-items: center;
     gap: 0.4rem;
-}
-
-.faq-answer {
-    white-space: pre-wrap;
-    margin: 0;
 }
 </style>
