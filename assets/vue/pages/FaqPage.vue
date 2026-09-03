@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fetchFaqs, type Faq } from '@/api/faqs';
 import FaqAccordionItem from '@/components/ui/FaqAccordionItem.vue';
 import PageHero from '@/components/ui/PageHero.vue';
+import { useAppStore } from '@/stores/app';
 
 const faqs = ref<Faq[]>([]);
 const query = ref('');
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+const page = useAppStore().pageContent('faq');
 
 function normalize(value: string): string {
     return value
@@ -48,8 +50,8 @@ onMounted(async () => {
 <template>
     <div class="faq-page">
         <PageHero
-            title="FAQ"
-            subtitle="Les questions les plus fréquentes des familles"
+            :title="page.title"
+            :subtitle="page.subtitle ?? undefined"
         />
 
         <v-container class="py-12">

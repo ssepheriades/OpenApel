@@ -17,7 +17,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -77,13 +76,6 @@ final class SiteSettingsCrudController extends AbstractCrudController
         yield TextField::new('siteName', 'Nom du site');
         yield TextField::new('baseline', 'Baseline')->setHelp('Phrase d\'accroche affichée sous le nom du site.');
 
-        yield FormField::addFieldset('Page d\'accueil');
-        yield TextField::new('homeTitle', 'Titre')
-            ->setHelp('Titre affiché en grand sur la page d\'accueil. Si vide, le nom du site est utilisé.');
-        yield TextareaField::new('homeText', 'Texte d\'introduction')
-            ->setNumOfRows(10)
-            ->setHelp('Markdown accepté (gras, listes, liens…). Laissé vide, seul le titre est affiché.');
-
         yield FormField::addFieldset('Images');
         yield Field::new('logoFile', 'Logo')
             ->setFormType(VichImageType::class)
@@ -110,15 +102,5 @@ final class SiteSettingsCrudController extends AbstractCrudController
             ->setHelp('Seuls le jour et le mois sont utilisés. L\'année en cours est calculée automatiquement.');
         yield DateField::new('schoolYearEnd', 'Fin')
             ->setHelp('Seuls le jour et le mois sont utilisés. L\'année en cours est calculée automatiquement.');
-
-        yield FormField::addFieldset('Pages publiques');
-        yield BooleanField::new('faqVisible', 'FAQ')
-            ->setHelp('Afficher la page FAQ dans le menu et sur le site public.');
-        yield BooleanField::new('teamVisible', 'Équipe')
-            ->setHelp('Afficher la page Équipe dans le menu et sur le site public.');
-        yield BooleanField::new('postsVisible', 'Actualités')
-            ->setHelp('Afficher les actualités dans le menu et sur le site public.');
-        yield BooleanField::new('agendaVisible', 'Agenda')
-            ->setHelp('Afficher l\'agenda dans le menu et sur le site public.');
     }
 }

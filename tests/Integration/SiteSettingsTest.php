@@ -57,8 +57,6 @@ final class SiteSettingsTest extends WebTestCase
         $settings = static::getContainer()->get(SiteSettingsRepository::class)->getOrCreate();
         $settings->setSiteName('APEL Démo')
             ->setBaseline('Ensemble pour nos enfants')
-            ->setHomeTitle('Bienvenue à l\'école')
-            ->setHomeText('**Ensemble** pour nos enfants.')
             ->setLogoFilename('logo.png');
         $this->entityManager->flush();
 
@@ -69,17 +67,17 @@ final class SiteSettingsTest extends WebTestCase
 
         self::assertSame('APEL Démo', $payload['siteName']);
         self::assertSame('Ensemble pour nos enfants', $payload['baseline']);
-        self::assertSame('Bienvenue à l\'école', $payload['homeTitle']);
-        self::assertSame('**Ensemble** pour nos enfants.', $payload['homeText']);
+        self::assertArrayNotHasKey('homeTitle', $payload);
+        self::assertArrayNotHasKey('homeText', $payload);
         self::assertSame('http://localhost/uploads/branding/logo.png', $payload['logoUrl']);
         self::assertNull($payload['faviconUrl']);
         self::assertSame(SiteSettings::DEFAULT_PRIMARY_COLOR, $payload['primaryColor']);
         self::assertSame(SiteSettings::DEFAULT_SCHOOL_YEAR_START, $payload['schoolYearStart']);
         self::assertSame(SiteSettings::DEFAULT_SCHOOL_YEAR_END, $payload['schoolYearEnd']);
-        self::assertTrue($payload['faqVisible']);
-        self::assertTrue($payload['teamVisible']);
-        self::assertTrue($payload['postsVisible']);
-        self::assertTrue($payload['agendaVisible']);
+        self::assertArrayNotHasKey('faqVisible', $payload);
+        self::assertArrayNotHasKey('teamVisible', $payload);
+        self::assertArrayNotHasKey('postsVisible', $payload);
+        self::assertArrayNotHasKey('agendaVisible', $payload);
         self::assertArrayNotHasKey('updatedAt', $payload);
     }
 }

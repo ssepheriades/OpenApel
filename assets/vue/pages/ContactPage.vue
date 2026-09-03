@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import ContactForm from '@/components/ui/ContactForm.vue';
 import PageHero from '@/components/ui/PageHero.vue';
+import { useAppStore } from '@/stores/app';
+
+const page = useAppStore().pageContent('contact');
 </script>
 
 <template>
     <div class="contact-page">
         <PageHero
-            title="Contact"
-            subtitle="Une question ? Écrivez-nous, nous vous répondrons dès que possible."
+            :title="page.title"
+            :subtitle="page.subtitle ?? undefined"
         />
 
         <v-container class="py-12">

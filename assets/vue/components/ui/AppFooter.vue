@@ -13,6 +13,7 @@ const appStore = useAppStore();
 
 const year = new Date().getFullYear();
 const contactEmail = computed(() => appStore.settings?.contactEmail ?? null);
+const legalPages = computed(() => appStore.documentPages);
 
 const socialLinks = computed<SocialLink[]>(() => {
     const links: SocialLink[] = [];
@@ -33,6 +34,15 @@ const socialLinks = computed<SocialLink[]>(() => {
 <template>
     <v-footer app class="d-flex flex-wrap justify-center align-center ga-4">
         <span class="text-caption">&copy; {{ year }} {{ appStore.siteName }}</span>
+
+        <router-link
+            v-for="page in legalPages"
+            :key="page.slug"
+            :to="{ name: page.slug }"
+            class="text-caption footer-link"
+        >
+            {{ page.title }}
+        </router-link>
 
         <a v-if="contactEmail" :href="`mailto:${contactEmail}`" class="text-caption footer-link">
             <FontAwesomeIcon :icon="['fas', 'envelope']" class="mr-1" />

@@ -44,14 +44,8 @@ final class SiteSettingsProviderTest extends TestCase
         self::assertSame(SiteSettings::DEFAULT_SECONDARY_COLOR, $view->secondaryColor);
         self::assertSame(SiteSettings::DEFAULT_SCHOOL_YEAR_START, $view->schoolYearStart);
         self::assertSame(SiteSettings::DEFAULT_SCHOOL_YEAR_END, $view->schoolYearEnd);
-        self::assertTrue($view->faqVisible);
-        self::assertTrue($view->teamVisible);
-        self::assertTrue($view->postsVisible);
-        self::assertTrue($view->agendaVisible);
         self::assertTrue($view->contactEmailEnabled);
         self::assertNull($view->baseline);
-        self::assertNull($view->homeTitle);
-        self::assertNull($view->homeText);
         self::assertNull($view->logoUrl);
     }
 }

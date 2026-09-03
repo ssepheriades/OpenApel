@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Field\MarkdownEditorField;
 use App\Entity\Faq;
 use App\Enum\FaqVisibility;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -12,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 final class FaqCrudController extends AbstractCrudController
@@ -41,7 +41,7 @@ final class FaqCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('question', 'Question');
-        yield TextareaField::new('answer', 'Réponse')->hideOnIndex();
+        yield MarkdownEditorField::new('answer', 'Réponse');
         yield AssociationField::new('theme', 'Thème')
             ->autocomplete();
         yield ChoiceField::new('visibility', 'Visibilité')

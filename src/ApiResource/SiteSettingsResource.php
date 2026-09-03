@@ -29,10 +29,6 @@ final readonly class SiteSettingsResource
         #[Groups(['site_settings:read'])]
         public ?string $baseline,
         #[Groups(['site_settings:read'])]
-        public ?string $homeTitle,
-        #[Groups(['site_settings:read'])]
-        public ?string $homeText,
-        #[Groups(['site_settings:read'])]
         public ?string $logoUrl,
         #[Groups(['site_settings:read'])]
         public ?string $faviconUrl,
@@ -50,14 +46,6 @@ final readonly class SiteSettingsResource
         public string $schoolYearStart,
         #[Groups(['site_settings:read'])]
         public string $schoolYearEnd,
-        #[Groups(['site_settings:read'])]
-        public bool $faqVisible,
-        #[Groups(['site_settings:read'])]
-        public bool $teamVisible,
-        #[Groups(['site_settings:read'])]
-        public bool $postsVisible,
-        #[Groups(['site_settings:read'])]
-        public bool $agendaVisible,
         // Constant identifier: a singleton still needs an @id for JSON-LD.
         #[ApiProperty(identifier: true)]
         #[Groups(['site_settings:read'])]

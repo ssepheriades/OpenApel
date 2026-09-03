@@ -19,3 +19,5 @@ framework:
             # Site branding snapshot: filesystem on purpose, so it works without APCu (CLI, tests).
             site_settings.cache:
                 adapter: cache.adapter.filesystem
+            page_catalog.cache:
+                adapter: cache.adapter.filesystem

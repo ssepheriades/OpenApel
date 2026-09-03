@@ -9,8 +9,10 @@ import AudienceChips from '@/components/ui/AudienceChips.vue';
 import PageHero from '@/components/ui/PageHero.vue';
 import ThemeChip from '@/components/ui/ThemeChip.vue';
 import { formatPostDate } from '@/utils/postDate';
+import { useAppStore } from '@/stores/app';
 
 const route = useRoute();
+const page = useAppStore().pageContent('news');
 const post = ref<Post | null>(null);
 const isLoading = ref(true);
 const error = ref<'load' | 'not-found' | null>(null);
@@ -42,7 +44,7 @@ watch(() => route.params.id, load, { immediate: true });
 
 <template>
     <div class="news-detail-page">
-        <PageHero title="Actualités" />
+        <PageHero :title="page.title" />
 
         <v-container class="py-12">
             <div class="news-detail">

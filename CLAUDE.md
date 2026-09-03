@@ -10,7 +10,7 @@ CMS pour une association de parents d'élèves. L'objectif est de pouvoir déplo
 - Actualités / articles
 - Événements / calendrier
 - Documents téléchargeables
-- Pages statiques (qui sommes-nous, contact, etc.)
+- Pages statiques et bandeaux de rubriques (entité `Page`, catalogue figé)
 - Formulaire de contact
 - Galerie photos
 
@@ -45,6 +45,7 @@ CMS pour une association de parents d'élèves. L'objectif est de pouvoir déplo
 
 **Libs frontend clés :**
 - `markdown-it` + `dompurify` — rendu Markdown sécurisé côté SPA
+- `@milkdown/crepe` — éditeur Markdown WYSIWYG dans EasyAdmin (stockage Markdown)
 - `axios` ou `fetch` natif pour les appels API
 - `@fortawesome/vue-fontawesome` + `@fortawesome/fontawesome-svg-core` + `@fortawesome/free-solid-svg-icons` — icônes via composant `<FontAwesomeIcon>`
 
@@ -258,7 +259,7 @@ L'asso gère des données potentiellement liées à des mineurs et à des famill
 
 - Pas de tracking analytics tiers (Google Analytics, etc.) sans bandeau de consentement
 - Logs serveur sans IP en clair après 24h (anonymisation)
-- Page "mentions légales" et "politique de confidentialité" obligatoires (entités `Page`)
+- Page "mentions légales" et "politique de confidentialité" obligatoires (catalogue `Page`, slugs `mentions-legales` et `politique-de-confidentialite`)
 - Formulaire de contact : pas de stockage en BDD au-delà du nécessaire, ou suppression auto après X jours
 - Photos des enfants : **toujours** vérifier l'autorisation parentale avant publication (à gérer côté process, mais prévoir un champ "autorisation reçue" sur les médias concernés)
 
@@ -271,6 +272,7 @@ Le projet est conçu pour être déployé en plusieurs instances indépendantes 
 - Routage par sous-domaine ou vhost (`asso1.domaine.fr`, `asso2.domaine.fr`)
 - Répertoire d'uploads séparé par instance au déploiement
 - Pas de référence en dur à un nom d'asso dans le code : l'identité du site (nom, baseline, logo, favicon, contact, réseaux, couleurs, bornes d'année scolaire) est stockée en BDD dans l'entité singleton `SiteSettings` (1 ligne, `id = 1`), éditable via "Réglages du site" dans EasyAdmin. Elle est exposée par `SiteSettingsProvider` (cache), `GET /api/site_settings` côté SPA et la fonction Twig `site_settings()` côté templates. Les dates `schoolYearStart` / `schoolYearEnd` ne conservent que le jour et le mois (l'année scolaire en cours est calculée à la volée).
+- Les textes uniques (bandeaux, intro accueil, mentions légales) sont des lignes de l'entité `Page`, une par slug du catalogue `PageSlug`. Le staff les édite dans EasyAdmin (Pages) mais ne crée pas de slug. La visibilité des rubriques (FAQ, équipe, actualités, agenda) et des pages juridiques est le booléen `Page.visible`. API : `GET /api/pages` et `GET /api/pages/{slug}`.
 
 ## Référence rapide des choix de conception
 
@@ -283,7 +285,7 @@ Le projet est conçu pour être déployé en plusieurs instances indépendantes 
 | Auth public | Aucune | Pas demandé, simplification |
 | Auth staff | Form login Symfony classique | Simple, robuste, CSRF natif |
 | Multi-langue | Non | Mono FR, peut être ajouté plus tard |
-| Éditeur contenu | Markdown (EasyMDE côté admin) | Simple, portable, versionnable |
+| Éditeur contenu | Markdown (Milkdown Crepe WYSIWYG côté admin) | Portable, lisible pour les bénévoles, pas de HTML d'éditeur |
 | Rendu Markdown | Côté serveur (CommonMark) | SEO, sécurité, perf SPA |
 | Style frontend | Vuetify 3 | Connaissance préalable, composants Material Design prêts à l'emploi |
 | TypeScript Vue | Oui | Robustesse, autocomplétion |

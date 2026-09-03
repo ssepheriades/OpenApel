@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Field\MarkdownEditorField;
 use App\Entity\Event;
 use App\Enum\EventState;
 use App\Enum\EventType;
@@ -40,7 +41,7 @@ final class EventCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('title');
-        yield TextareaField::new('description')->hideOnIndex();
+        yield MarkdownEditorField::new('description', 'Description');
         yield TextField::new('shortDescription');
         yield DateTimeField::new('startsAt');
         yield DateTimeField::new('endsAt');

@@ -4,6 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fetchTeamMembers, type TeamMember } from '@/api/team';
 import TeamMemberCard from '@/components/ui/TeamMemberCard.vue';
 import PageHero from '@/components/ui/PageHero.vue';
+import { useAppStore } from '@/stores/app';
+
+const page = useAppStore().pageContent('team');
 
 const members = ref<TeamMember[]>([]);
 const isLoading = ref(true);
@@ -22,7 +25,7 @@ onMounted(async () => {
 
 <template>
     <div class="team-page">
-        <PageHero title="Votre Équipe APEL" />
+        <PageHero :title="page.title" :subtitle="page.subtitle ?? undefined" />
 
         <!-- Content -->
         <v-container class="py-12">

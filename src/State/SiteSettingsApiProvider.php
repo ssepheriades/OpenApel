@@ -28,8 +28,6 @@ final class SiteSettingsApiProvider implements ProviderInterface
         return new SiteSettingsResource(
             siteName: $settings->siteName,
             baseline: $settings->baseline,
-            homeTitle: $settings->homeTitle,
-            homeText: $settings->homeText,
             logoUrl: $this->absolute($settings->logoUrl),
             faviconUrl: $this->absolute($settings->faviconUrl),
             contactEmail: $settings->contactEmail,
@@ -39,10 +37,6 @@ final class SiteSettingsApiProvider implements ProviderInterface
             secondaryColor: $settings->secondaryColor,
             schoolYearStart: $settings->schoolYearStart,
             schoolYearEnd: $settings->schoolYearEnd,
-            faqVisible: $settings->faqVisible,
-            teamVisible: $settings->teamVisible,
-            postsVisible: $settings->postsVisible,
-            agendaVisible: $settings->agendaVisible,
         );
     }
 

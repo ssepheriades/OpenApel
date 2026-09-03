@@ -33,6 +33,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 app: './assets/vue/main.ts',
+                admin: './assets/admin/markdown-editor.ts',
             },
         },
     },

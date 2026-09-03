@@ -43,14 +43,6 @@ class SiteSettings
     #[Assert\Length(max: 255)]
     private ?string $baseline = null;
 
-    #[ORM\Column(length: 180, nullable: true)]
-    #[Assert\Length(max: 180)]
-    private ?string $homeTitle = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\Length(max: 20000)]
-    private ?string $homeText = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logoFilename = null;
 
@@ -108,18 +100,6 @@ class SiteSettings
     #[Assert\NotNull]
     private \DateTimeImmutable $schoolYearEnd;
 
-    #[ORM\Column]
-    private bool $faqVisible = true;
-
-    #[ORM\Column]
-    private bool $teamVisible = true;
-
-    #[ORM\Column]
-    private bool $postsVisible = true;
-
-    #[ORM\Column]
-    private bool $agendaVisible = true;
-
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
 
@@ -154,30 +134,6 @@ class SiteSettings
     public function setBaseline(?string $baseline): self
     {
         $this->baseline = self::normalizeOptionalString($baseline);
-
-        return $this;
-    }
-
-    public function getHomeTitle(): ?string
-    {
-        return $this->homeTitle;
-    }
-
-    public function setHomeTitle(?string $homeTitle): self
-    {
-        $this->homeTitle = self::normalizeOptionalString($homeTitle);
-
-        return $this;
-    }
-
-    public function getHomeText(): ?string
-    {
-        return $this->homeText;
-    }
-
-    public function setHomeText(?string $homeText): self
-    {
-        $this->homeText = self::normalizeOptionalString($homeText);
 
         return $this;
     }
@@ -324,54 +280,6 @@ class SiteSettings
     public function setSchoolYearEnd(\DateTimeImmutable $schoolYearEnd): self
     {
         $this->schoolYearEnd = $schoolYearEnd;
-
-        return $this;
-    }
-
-    public function isFaqVisible(): bool
-    {
-        return $this->faqVisible;
-    }
-
-    public function setFaqVisible(bool $faqVisible): self
-    {
-        $this->faqVisible = $faqVisible;
-
-        return $this;
-    }
-
-    public function isTeamVisible(): bool
-    {
-        return $this->teamVisible;
-    }
-
-    public function setTeamVisible(bool $teamVisible): self
-    {
-        $this->teamVisible = $teamVisible;
-
-        return $this;
-    }
-
-    public function isPostsVisible(): bool
-    {
-        return $this->postsVisible;
-    }
-
-    public function setPostsVisible(bool $postsVisible): self
-    {
-        $this->postsVisible = $postsVisible;
-
-        return $this;
-    }
-
-    public function isAgendaVisible(): bool
-    {
-        return $this->agendaVisible;
-    }
-
-    public function setAgendaVisible(bool $agendaVisible): self
-    {
-        $this->agendaVisible = $agendaVisible;
 
         return $this;
     }

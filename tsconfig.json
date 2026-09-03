@@ -17,5 +17,5 @@
         },
         "types": ["vite/client"]
     },
-    "include": ["assets/vue/**/*.ts", "assets/vue/**/*.vue"]
+    "include": ["assets/vue/**/*.ts", "assets/vue/**/*.vue", "assets/admin/**/*.ts"]
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Field\MarkdownEditorField;
 use App\Entity\Post;
 use App\Enum\PostState;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 final class PostCrudController extends AbstractCrudController
@@ -36,7 +36,7 @@ final class PostCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('title', 'Titre');
-        yield TextareaField::new('content', 'Contenu')->hideOnIndex();
+        yield MarkdownEditorField::new('content', 'Contenu');
         yield AssociationField::new('theme', 'Thème')
             ->autocomplete();
         yield AssociationField::new('author', 'Auteur');

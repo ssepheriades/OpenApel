@@ -6,3 +6,7 @@ pentatrion_vite:
     # /projects/OpenApel/projects/OpenApel/public and silently skip the tags.
     public_directory: public
     throw_on_missing_entry: true
+
+when@test:
+    pentatrion_vite:
+        throw_on_missing_entry: false

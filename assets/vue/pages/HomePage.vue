@@ -5,8 +5,8 @@ import MarkdownContent from '@/components/ui/MarkdownContent.vue';
 import { useAppStore } from '@/stores/app';
 
 const appStore = useAppStore();
-
-const hasIntro = computed(() => Boolean(appStore.homeText));
+const home = computed(() => appStore.pageContent('home'));
+const hasIntro = computed(() => Boolean(home.value.body));
 </script>
 
 <template>
@@ -16,7 +16,7 @@ const hasIntro = computed(() => Boolean(appStore.homeText));
             <v-container class="home-hero__inner">
                 <div class="home-hero__content">
                     <p v-if="appStore.baseline" class="home-kicker">{{ appStore.baseline }}</p>
-                    <h1 class="home-title">{{ appStore.homeTitle }}</h1>
+                    <h1 class="home-title">{{ home.title }}</h1>
                     <span class="home-rule" aria-hidden="true"></span>
                 </div>
             </v-container>
@@ -24,7 +24,7 @@ const hasIntro = computed(() => Boolean(appStore.homeText));
 
         <v-container v-if="hasIntro" class="home-letter-wrap">
             <article class="home-letter">
-                <MarkdownContent :source="appStore.homeText ?? ''" />
+                <MarkdownContent :source="home.body ?? ''" />
             </article>
         </v-container>
 

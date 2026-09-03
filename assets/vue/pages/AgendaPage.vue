@@ -17,6 +17,7 @@ import {
 } from '@/utils/schoolYear';
 
 const appStore = useAppStore();
+const page = appStore.pageContent('agenda');
 const { smAndDown } = useDisplay();
 const events = ref<Event[]>([]);
 const isLoading = ref(true);
@@ -71,8 +72,8 @@ onMounted(async () => {
 <template>
     <div class="agenda-page">
         <PageHero
-            title="Agenda"
-            subtitle="Découvrez tous les événements à venir et l'historique de nos activités"
+            :title="page.title"
+            :subtitle="page.subtitle ?? undefined"
         />
 
         <v-container class="py-12">

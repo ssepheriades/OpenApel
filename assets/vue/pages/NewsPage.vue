@@ -5,6 +5,7 @@ import { fetchPosts, type Post } from '@/api/posts';
 import { fetchContentThemes, type ContentTheme } from '@/api/themes';
 import PageHero from '@/components/ui/PageHero.vue';
 import PostCard from '@/components/ui/PostCard.vue';
+import { useAppStore } from '@/stores/app';
 
 type ThemeFilter = 'all' | number;
 
@@ -13,6 +14,7 @@ const themes = ref<ContentTheme[]>([]);
 const selectedTheme = ref<ThemeFilter>('all');
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+const page = useAppStore().pageContent('news');
 
 const filteredPosts = computed(() => {
     if (selectedTheme.value === 'all') {
@@ -43,8 +45,8 @@ onMounted(async () => {
 <template>
     <div class="news-page">
         <PageHero
-            title="Actualités"
-            subtitle="Les nouvelles de l'association"
+            :title="page.title"
+            :subtitle="page.subtitle ?? undefined"
         />
 
         <v-container class="py-12">

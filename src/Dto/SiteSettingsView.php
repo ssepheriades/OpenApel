@@ -17,8 +17,6 @@ final readonly class SiteSettingsView
     public function __construct(
         public string $siteName,
         public ?string $baseline,
-        public ?string $homeTitle,
-        public ?string $homeText,
         public ?string $logoUrl,
         public ?string $faviconUrl,
         public ?string $contactEmail,
@@ -29,10 +27,6 @@ final readonly class SiteSettingsView
         public string $secondaryColor,
         public string $schoolYearStart,
         public string $schoolYearEnd,
-        public bool $faqVisible,
-        public bool $teamVisible,
-        public bool $postsVisible,
-        public bool $agendaVisible,
     ) {
     }
 
@@ -41,8 +35,6 @@ final readonly class SiteSettingsView
         return new self(
             siteName: $settings->getSiteName(),
             baseline: $settings->getBaseline(),
-            homeTitle: $settings->getHomeTitle(),
-            homeText: $settings->getHomeText(),
             logoUrl: self::uploadUrl($settings->getLogoFilename()),
             faviconUrl: self::uploadUrl($settings->getFaviconFilename()),
             contactEmail: $settings->getContactEmail(),
@@ -53,10 +45,6 @@ final readonly class SiteSettingsView
             secondaryColor: $settings->getSecondaryColor(),
             schoolYearStart: $settings->getSchoolYearStart()->format('Y-m-d'),
             schoolYearEnd: $settings->getSchoolYearEnd()->format('Y-m-d'),
-            faqVisible: $settings->isFaqVisible(),
-            teamVisible: $settings->isTeamVisible(),
-            postsVisible: $settings->isPostsVisible(),
-            agendaVisible: $settings->isAgendaVisible(),
         );
     }
 

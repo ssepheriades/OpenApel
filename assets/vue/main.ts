@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
     app.use(vuetify);
 
     // Resolve branding before the first navigation so visibility flags are known.
-    await useAppStore(pinia).loadSettings(vuetify);
+    await useAppStore(pinia).boot(vuetify);
 
     app.use(router);
     app.mount('#app');

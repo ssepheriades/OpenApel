@@ -1,11 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAppStore, type PageVisibilityKey } from '@/stores/app';
-
-declare module 'vue-router' {
-    interface RouteMeta {
-        visibilityKey?: PageVisibilityKey;
-    }
-}
+import { useAppStore } from '@/stores/app';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -19,45 +13,46 @@ const router = createRouter({
             path: '/equipe',
             name: 'team',
             component: () => import('@/pages/TeamPage.vue'),
-            meta: { visibilityKey: 'teamVisible' },
         },
         {
             path: '/agenda',
             name: 'agenda',
             component: () => import('@/pages/AgendaPage.vue'),
-            meta: { visibilityKey: 'agendaVisible' },
         },
         {
             path: '/actualites',
             name: 'news',
             component: () => import('@/pages/NewsPage.vue'),
-            meta: { visibilityKey: 'postsVisible' },
         },
         {
             path: '/actualites/:id',
             name: 'news-detail',
             component: () => import('@/pages/NewsDetailPage.vue'),
-            meta: { visibilityKey: 'postsVisible' },
         },
         {
             path: '/faq',
             name: 'faq',
             component: () => import('@/pages/FaqPage.vue'),
-            meta: { visibilityKey: 'faqVisible' },
         },
         {
             path: '/contact',
             name: 'contact',
             component: () => import('@/pages/ContactPage.vue'),
         },
+        {
+            path: '/mentions-legales',
+            name: 'mentions-legales',
+            component: () => import('@/pages/DocumentPage.vue'),
+        },
+        {
+            path: '/politique-de-confidentialite',
+            name: 'politique-de-confidentialite',
+            component: () => import('@/pages/DocumentPage.vue'),
+        },
     ],
 });
 
 router.beforeEach((to) => {
-    if (to.meta.visibilityKey === undefined) {
-        return true;
-    }
-
     const store = useAppStore();
     if (store.isRouteVisible(to.name)) {
         return true;

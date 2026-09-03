@@ -9,6 +9,7 @@ use App\Entity\ContentTheme;
 use App\Entity\Event;
 use App\Entity\Faq;
 use App\Entity\Grade;
+use App\Entity\Page;
 use App\Entity\Post;
 use App\Entity\SchoolClass;
 use App\Entity\SiteSettings;
@@ -16,6 +17,7 @@ use App\Entity\User;
 use App\Repository\ContactMessageRepository;
 use App\Service\SiteSettingsProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -51,6 +53,12 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
+    public function configureAssets(): Assets
+    {
+        return parent::configureAssets()
+            ->addHtmlContentToHead($this->renderView('admin/_vite.html.twig'));
+    }
+
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
@@ -58,6 +66,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Events', 'fa fa-calendar', Event::class);
         yield MenuItem::linkToCrud('Posts', 'fa fa-newspaper', Post::class);
         yield MenuItem::linkToCrud('FAQs', 'fa fa-question-circle', Faq::class);
+        yield MenuItem::linkToCrud('Pages', 'fa fa-file-text', Page::class);
         yield MenuItem::linkToCrud('Thèmes', 'fa fa-tags', ContentTheme::class);
         yield MenuItem::section('Messages');
         yield $this->contactMessagesMenuItem();
