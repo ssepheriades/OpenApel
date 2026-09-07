@@ -38,6 +38,7 @@ security:
         main:
             lazy: true
             context: main
+            provider: app_user_provider
 
     access_control:
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }

@@ -80,7 +80,7 @@ final class SiteSettingsCrudController extends AbstractCrudController
         yield Field::new('logoFile', 'Logo')
             ->setFormType(VichImageType::class)
             ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false])
-            ->setHelp('JPEG, PNG, WebP ou SVG, 2 Mo max.');
+            ->setHelp('JPEG, PNG ou WebP, 2 Mo max.');
         yield Field::new('faviconFile', 'Favicon')
             ->setFormType(VichImageType::class)
             ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false])

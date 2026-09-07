@@ -31,7 +31,8 @@ final class DocumentCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Document')
             ->setEntityLabelInPlural('Documents')
             ->setPageTitle(Crud::PAGE_INDEX, 'Documents')
-            ->setDefaultSort(['date' => 'DESC']);
+            ->setDefaultSort(['date' => 'DESC'])
+            ->setEntityValidationGroups(['Default', 'unique']);
     }
 
     public function createEntity(string $entityFqcn): Document
@@ -49,6 +50,7 @@ final class DocumentCrudController extends AbstractCrudController
         yield AssociationField::new('theme', 'Thème')
             ->autocomplete();
         yield ChoiceField::new('visibility', 'Visibilité')
+            ->setHelp('Masquer retire le document du listing public et bloque le téléchargement, même avec l’ancienne URL.')
             ->setChoices(
                 array_combine(
                     array_map(fn (DocumentVisibility $visibility) => $visibility->label(), DocumentVisibility::cases()),

@@ -23,7 +23,8 @@ export interface SitePage {
 }
 
 /**
- * Keep in sync with App\Enum\PageSlug defaults. Used when the catalogue API is down.
+ * Keep in sync with App\Enum\PageSlug defaults. Titles/copy when a slug is
+ * missing; gated visibility is fail-closed (absent = hidden).
  */
 export const PAGE_DEFAULTS: Record<PageSlug, Omit<SitePage, 'slug' | 'kind'>> = {
     home: { title: 'Accueil', subtitle: null, body: null, visible: true },

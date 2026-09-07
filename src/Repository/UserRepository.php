@@ -11,9 +11,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Uuid;
 
 /**
+ * Not final on purpose: PhotoDownloadPolicy unit tests double this repository.
+ *
  * @extends ServiceEntityRepository<User>
  */
-final class UserRepository extends ServiceEntityRepository
+class UserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -43,5 +45,13 @@ final class UserRepository extends ServiceEntityRepository
             $this->findBy(['isActive' => true], ['weight' => 'DESC', 'lastName' => 'ASC']),
             static fn (User $user): bool => $user->hasRole(UserRole::Member),
         ));
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findByPhotoFilename(string $filename): array
+    {
+        return $this->findBy(['photoFilename' => $filename]);
     }
 }

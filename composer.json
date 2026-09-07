@@ -12,7 +12,6 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.0",
         "easycorp/easyadmin-bundle": "^4.0",
-        "league/commonmark": "^2.5",
         "liip/imagine-bundle": "^2.13",
         "nelmio/cors-bundle": "^2.5",
         "pentatrion/vite-bundle": "^8.2",

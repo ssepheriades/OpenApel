@@ -46,8 +46,9 @@ class SiteSettings
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logoFilename = null;
 
+    // No SVG for the logo: it is shown in <img> and also reachable at /media/branding/... on this origin.
     #[Vich\UploadableField(mapping: 'branding', fileNameProperty: 'logoFilename')]
-    #[Assert\File(maxSize: '2M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'], mimeTypesMessage: 'Formats acceptés : JPEG, PNG, WebP, SVG.')]
+    #[Assert\File(maxSize: '2M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Formats acceptés : JPEG, PNG, WebP.')]
     private ?File $logoFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]

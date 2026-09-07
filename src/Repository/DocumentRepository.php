@@ -17,4 +17,9 @@ class DocumentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Document::class);
     }
+
+    public function findOneByFilename(string $filename): ?Document
+    {
+        return $this->findOneBy(['filename' => $filename]);
+    }
 }

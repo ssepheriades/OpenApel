@@ -28,6 +28,10 @@ final class PageCatalogApiProvider implements ProviderInterface
         if ($operation instanceof GetCollection) {
             $resources = [];
             foreach ($this->catalog->all() as $view) {
+                if (!$view->visible) {
+                    continue;
+                }
+
                 $resources[] = PageResource::fromView($view);
             }
 

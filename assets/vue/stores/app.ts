@@ -36,6 +36,7 @@ export const useAppStore = defineStore('app', () => {
     const pages = ref<Partial<Record<PageSlug, SitePage>>>({});
     const pagesLoading = ref(false);
     const pagesError = ref<string | null>(null);
+    const pagesLoaded = ref(false);
 
     const siteName = computed(() => settings.value?.siteName ?? DEFAULT_SITE_NAME);
     const baseline = computed(() => settings.value?.baseline ?? null);
@@ -45,8 +46,9 @@ export const useAppStore = defineStore('app', () => {
     );
 
     /**
-     * Hidden pages stay reachable until the catalogue loads (or if it fails),
-     * so a pages outage never blocks the public site.
+     * Gated slugs are hidden unless the catalogue returned them. Home and
+     * contact stay reachable. A pages outage does not re-show unpublished
+     * rubriques; a later failed refresh keeps the last successful map.
      */
     function isRouteVisible(name: string | symbol | null | undefined): boolean {
         if (typeof name !== 'string') {
@@ -61,11 +63,23 @@ export const useAppStore = defineStore('app', () => {
         return pageContent(slug).visible;
     }
 
+    function isPageVisible(slug: PageSlug, loaded: SitePage | undefined): boolean {
+        if (loaded !== undefined) {
+            return loaded.visible;
+        }
+
+        if (GATED_SLUGS.includes(slug)) {
+            return false;
+        }
+
+        return PAGE_DEFAULTS[slug].visible;
+    }
+
     function pageContent(slug: PageSlug): SitePage {
         const loaded = pages.value[slug];
         const defaults = PAGE_DEFAULTS[slug];
         const kind = slug === 'mentions-legales' || slug === 'politique-de-confidentialite' ? 'document' : 'section';
-        const visible = loaded?.visible ?? defaults.visible;
+        const visible = isPageVisible(slug, loaded);
 
         if (slug === 'home') {
             return {
@@ -138,6 +152,7 @@ export const useAppStore = defineStore('app', () => {
                 next[page.slug] = page;
             }
             pages.value = next;
+            pagesLoaded.value = true;
         } catch (error) {
             pagesError.value = error instanceof Error ? error.message : 'Unable to load pages';
         } finally {
@@ -157,6 +172,7 @@ export const useAppStore = defineStore('app', () => {
         pages,
         pagesLoading,
         pagesError,
+        pagesLoaded,
         siteName,
         baseline,
         documentPages,

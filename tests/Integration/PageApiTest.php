@@ -80,7 +80,7 @@ final class PageApiTest extends WebTestCase
         self::assertArrayNotHasKey('updatedAt', $faq);
     }
 
-    public function testHiddenPageBodyIsNotExposed(): void
+    public function testHiddenPageIsOmittedFromCollection(): void
     {
         $repository = static::getContainer()->get(PageRepository::class);
         $pages = $repository->ensureCatalog();
@@ -97,19 +97,13 @@ final class PageApiTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $collection = json_decode((string) $this->client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
         self::assertIsArray($collection);
+        self::assertCount(\count(PageSlug::cases()) - 1, $collection);
 
-        $mentions = null;
         foreach ($collection as $item) {
-            if (($item['slug'] ?? null) === 'mentions-legales') {
-                $mentions = $item;
-                break;
-            }
+            self::assertIsArray($item);
+            self::assertNotSame('mentions-legales', $item['slug'] ?? null);
+            self::assertTrue($item['visible'] ?? false);
         }
-
-        self::assertIsArray($mentions);
-        self::assertFalse($mentions['visible']);
-        self::assertNull($mentions['body']);
-        self::assertSame('Mentions légales', $mentions['title']);
 
         $this->client->request('GET', '/api/pages/mentions-legales', server: ['HTTP_ACCEPT' => 'application/json']);
 

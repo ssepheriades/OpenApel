@@ -111,7 +111,7 @@ Les associations gèrent des données de familles, parfois d'enfants. Le projet 
 
 - API publique **en lecture seule** ; l'écriture passe par l'admin authentifié
 - formulaire de contact limité (5 envois / 15 min) et CSRF sur les formulaires Twig
-- Markdown assaini (CommonMark côté serveur, DOMPurify côté SPA)
+- Markdown assaini dans la SPA (`markdown-it` sans HTML brut, puis DOMPurify)
 - pages juridiques prévues dans le catalogue (`mentions-legales`, `politique-de-confidentialite`)
 - pas d'analytics tiers dans le cœur du projet
 

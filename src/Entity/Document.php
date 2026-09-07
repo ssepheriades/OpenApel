@@ -13,6 +13,7 @@ use App\Enum\MediaMapping;
 use App\Repository\DocumentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,9 +21,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_document_filename', columns: ['filename'])]
 #[ORM\Index(name: 'idx_document_visibility', columns: ['visibility'])]
 #[ORM\Index(name: 'idx_document_theme', columns: ['theme_id'])]
 #[ORM\Index(name: 'idx_document_date', columns: ['date'])]
+#[UniqueEntity(fields: ['filename'], message: 'Ce fichier est déjà utilisé.', groups: ['unique'])]
 #[Vich\Uploadable]
 #[ApiResource(
     operations: [

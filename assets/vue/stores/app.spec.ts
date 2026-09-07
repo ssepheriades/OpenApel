@@ -150,36 +150,59 @@ describe('useAppStore', () => {
         await store.boot();
 
         expect(store.pagesError).toBe('pages down');
+        expect(store.pagesLoaded).toBe(false);
+        expect(store.isRouteVisible('home')).toBe(true);
+        expect(store.isRouteVisible('contact')).toBe(true);
+        expect(store.isRouteVisible('faq')).toBe(false);
+        expect(store.isRouteVisible('documents')).toBe(false);
+        expect(store.isRouteVisible('team')).toBe(false);
         expect(store.pageContent('faq').title).toBe('FAQ');
         expect(store.pageContent('documents').title).toBe('Documents');
         expect(store.pageContent('team').title).toBe('Équipe');
         expect(store.pageContent('contact').subtitle).toContain('Écrivez-nous');
-        expect(store.documentPages).toHaveLength(2);
+        expect(store.documentPages).toHaveLength(0);
     });
 
-    it('treats gated routes as visible before the catalogue loads', () => {
+    it('hides gated routes before the catalogue loads', () => {
         const store = useAppStore();
 
         expect(store.isRouteVisible('home')).toBe(true);
-        expect(store.isRouteVisible('faq')).toBe(true);
-        expect(store.isRouteVisible('documents')).toBe(true);
-        expect(store.isRouteVisible('team')).toBe(true);
-        expect(store.isRouteVisible('news')).toBe(true);
-        expect(store.isRouteVisible('news-detail')).toBe(true);
-        expect(store.isRouteVisible('agenda')).toBe(true);
+        expect(store.isRouteVisible('contact')).toBe(true);
+        expect(store.isRouteVisible('faq')).toBe(false);
+        expect(store.isRouteVisible('documents')).toBe(false);
+        expect(store.isRouteVisible('team')).toBe(false);
+        expect(store.isRouteVisible('news')).toBe(false);
+        expect(store.isRouteVisible('news-detail')).toBe(false);
+        expect(store.isRouteVisible('agenda')).toBe(false);
     });
 
-    it('hides gated routes when their page visible flag is off', async () => {
+    it('keeps the last catalogue if a later pages fetch fails', async () => {
+        mockedFetchSettings.mockResolvedValue(sampleSettings);
+        mockedFetchPages.mockResolvedValue(samplePages);
+        const store = useAppStore();
+
+        await store.boot();
+        expect(store.isRouteVisible('faq')).toBe(true);
+
+        mockedFetchPages.mockRejectedValue(new Error('pages down'));
+        await store.loadPages();
+
+        expect(store.pagesError).toBe('pages down');
+        expect(store.pagesLoaded).toBe(true);
+        expect(store.isRouteVisible('faq')).toBe(true);
+        expect(store.isRouteVisible('home')).toBe(true);
+    });
+
+    it('hides gated routes when they are omitted from the catalogue', async () => {
         mockedFetchSettings.mockResolvedValue(sampleSettings);
         mockedFetchPages.mockResolvedValue(
-            samplePages.map((page) =>
-                page.slug === 'news' || page.slug === 'faq' || page.slug === 'documents' ? { ...page, visible: false } : page,
-            ),
+            samplePages.filter((page) => page.slug !== 'news' && page.slug !== 'faq' && page.slug !== 'documents'),
         );
         const store = useAppStore();
 
         await store.boot();
 
+        expect(store.pagesLoaded).toBe(true);
         expect(store.isRouteVisible('home')).toBe(true);
         expect(store.isRouteVisible('team')).toBe(true);
         expect(store.isRouteVisible('agenda')).toBe(true);
@@ -189,13 +212,21 @@ describe('useAppStore', () => {
         expect(store.isRouteVisible('documents')).toBe(false);
     });
 
-    it('hides legal documents when their visible flag is off', async () => {
+    it('hides a gated slug omitted from a successful fetch', async () => {
         mockedFetchSettings.mockResolvedValue(sampleSettings);
-        mockedFetchPages.mockResolvedValue(
-            samplePages.map((page) =>
-                page.slug === 'mentions-legales' ? { ...page, visible: false } : page,
-            ),
-        );
+        mockedFetchPages.mockResolvedValue(samplePages.filter((page) => page.slug !== 'faq'));
+        const store = useAppStore();
+
+        await store.boot();
+
+        expect(store.isRouteVisible('faq')).toBe(false);
+        expect(store.isRouteVisible('team')).toBe(true);
+        expect(store.pageContent('faq').visible).toBe(false);
+    });
+
+    it('hides legal documents omitted from the catalogue', async () => {
+        mockedFetchSettings.mockResolvedValue(sampleSettings);
+        mockedFetchPages.mockResolvedValue(samplePages.filter((page) => page.slug !== 'mentions-legales'));
         const store = useAppStore();
 
         await store.boot();
