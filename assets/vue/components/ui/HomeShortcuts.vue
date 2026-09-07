@@ -38,6 +38,12 @@ const allShortcuts: Shortcut[] = [
         icon: 'circle-question',
     },
     {
+        label: 'Documents',
+        description: 'Comptes rendus, formulaires et documents utiles',
+        to: { name: 'documents' },
+        icon: 'file',
+    },
+    {
         label: 'Contact',
         description: "Écrire à l'association",
         to: { name: 'contact' },

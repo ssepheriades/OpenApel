@@ -40,7 +40,10 @@ final class PageCatalogApiProvider implements ProviderInterface
         }
 
         $view = $this->catalog->get($slug);
+        if (null === $view || !$view->visible) {
+            return null;
+        }
 
-        return null === $view ? null : PageResource::fromView($view);
+        return PageResource::fromView($view);
     }
 }

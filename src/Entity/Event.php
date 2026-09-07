@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Enum\EventState;
 use App\Enum\EventType;
 use App\Enum\EventVisibility;
+use App\Enum\MediaMapping;
 use App\Repository\EventRepository;
 use App\Validator\Constraints\ExclusiveGradeOrClass;
 use Doctrine\DBAL\Types\Types;
@@ -22,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ExclusiveGradeOrClass]
 #[ApiResource(
     operations: [
@@ -88,6 +90,9 @@ class Event implements AudienceTargetedInterface
     #[ORM\Column(nullable: true)]
     #[Groups(['event:read'])]
     private ?bool $isAllDay = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $heroImageFilename = null;
@@ -265,6 +270,7 @@ class Event implements AudienceTargetedInterface
     public function setHeroImageFile(?File $heroImageFile): static
     {
         $this->heroImageFile = $heroImageFile;
+        $this->touchOnUpload($heroImageFile);
 
         return $this;
     }
@@ -289,19 +295,43 @@ class Event implements AudienceTargetedInterface
     public function setFlyerImageFile(?File $flyerImageFile): static
     {
         $this->flyerImageFile = $flyerImageFile;
+        $this->touchOnUpload($flyerImageFile);
 
         return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function setUpdatedTimestamp(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Vich only moves the file when Doctrine detects a change on the entity,
+     * so a fresh upload must dirty a mapped column.
+     */
+    private function touchOnUpload(?File $file): void
+    {
+        if (null !== $file) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     #[Groups(['event:read'])]
     public function getHeroImageUrl(): ?string
     {
-        return null !== $this->heroImageFilename ? '/uploads/photos/' . $this->heroImageFilename : null;
+        return MediaMapping::Photos->url($this->heroImageFilename);
     }
 
     #[Groups(['event:read'])]
     public function getFlyerImageUrl(): ?string
     {
-        return null !== $this->flyerImageFilename ? '/uploads/photos/' . $this->flyerImageFilename : null;
+        return MediaMapping::Photos->url($this->flyerImageFilename);
     }
 }

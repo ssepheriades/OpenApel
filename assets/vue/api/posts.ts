@@ -8,6 +8,7 @@ export interface Post {
     content: string;
     theme: ContentTheme;
     createdAt: string;
+    coverImageUrl?: string | null;
     grades: Grade[];
     schoolClasses: SchoolClass[];
 }

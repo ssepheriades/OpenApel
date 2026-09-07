@@ -5,6 +5,7 @@ export type PageSlug =
     | 'news'
     | 'agenda'
     | 'faq'
+    | 'documents'
     | 'team'
     | 'contact'
     | 'mentions-legales'
@@ -34,6 +35,12 @@ export const PAGE_DEFAULTS: Record<PageSlug, Omit<SitePage, 'slug' | 'kind'>> = 
         visible: true,
     },
     faq: { title: 'FAQ', subtitle: 'Les questions les plus fréquentes des familles', body: null, visible: true },
+    documents: {
+        title: 'Documents',
+        subtitle: 'Comptes rendus, formulaires et documents utiles',
+        body: null,
+        visible: true,
+    },
     team: { title: 'Équipe', subtitle: null, body: null, visible: true },
     contact: {
         title: 'Contact',
@@ -62,6 +69,7 @@ export const GATED_SLUGS: PageSlug[] = [
     'news',
     'agenda',
     'faq',
+    'documents',
     'team',
     'mentions-legales',
     'politique-de-confidentialite',

@@ -20,6 +20,7 @@ final class PageSlugTest extends TestCase
                 'news',
                 'agenda',
                 'faq',
+                'documents',
                 'team',
                 'contact',
                 'mentions-legales',
@@ -31,7 +32,7 @@ final class PageSlugTest extends TestCase
 
     public function testListingSectionsExposeAChapoNotABody(): void
     {
-        foreach ([PageSlug::News, PageSlug::Agenda, PageSlug::Faq, PageSlug::Team, PageSlug::Contact] as $slug) {
+        foreach ([PageSlug::News, PageSlug::Agenda, PageSlug::Faq, PageSlug::Documents, PageSlug::Team, PageSlug::Contact] as $slug) {
             self::assertSame(PageKind::Section, $slug->kind());
             self::assertTrue($slug->usesSubtitle());
             self::assertFalse($slug->usesBody());
@@ -49,6 +50,7 @@ final class PageSlugTest extends TestCase
         self::assertTrue(PageSlug::MentionsLegales->usesVisibility());
         self::assertTrue(PageSlug::PolitiqueDeConfidentialite->usesVisibility());
         self::assertTrue(PageSlug::Faq->usesVisibility());
+        self::assertTrue(PageSlug::Documents->usesVisibility());
         self::assertTrue(PageSlug::News->usesVisibility());
         self::assertTrue(PageSlug::Agenda->usesVisibility());
         self::assertTrue(PageSlug::Team->usesVisibility());
@@ -59,5 +61,7 @@ final class PageSlugTest extends TestCase
     public function testTeamDefaultTitleIsNeutral(): void
     {
         self::assertSame('Équipe', PageSlug::Team->defaultTitle());
+        self::assertSame('Documents', PageSlug::Documents->defaultTitle());
+        self::assertSame('Comptes rendus, formulaires et documents utiles', PageSlug::Documents->defaultSubtitle());
     }
 }

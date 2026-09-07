@@ -87,6 +87,21 @@ final class PublicApiSecurityTest extends WebTestCase
         self::assertResponseStatusCodeSame(404);
     }
 
+    public function testDocumentWritesAreNotExposed(): void
+    {
+        $this->client->request(
+            'POST',
+            '/api/documents',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+            ],
+            content: '{}',
+        );
+
+        self::assertResponseStatusCodeSame(405);
+    }
+
     public function testSchoolClassItemGetIsNotExposed(): void
     {
         $this->client->request('GET', '/api/school_classes/1', server: ['HTTP_ACCEPT' => 'application/json']);

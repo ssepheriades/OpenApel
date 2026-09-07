@@ -14,6 +14,7 @@ const allNavItems: NavItem[] = [
     { label: 'Actualités', to: { name: 'news' }, icon: 'newspaper' },
     { label: 'Agenda', to: { name: 'agenda' }, icon: 'calendar-days' },
     { label: 'FAQ', to: { name: 'faq' }, icon: 'circle-question' },
+    { label: 'Documents', to: { name: 'documents' }, icon: 'file' },
     { label: 'Équipe', to: { name: 'team' }, icon: 'users' },
     { label: 'Contact', to: { name: 'contact' }, icon: 'envelope' },
 ];

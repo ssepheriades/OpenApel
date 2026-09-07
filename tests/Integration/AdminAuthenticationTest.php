@@ -9,6 +9,7 @@ use App\Entity\Grade;
 use App\Entity\SchoolClass;
 use App\Entity\SiteSettings;
 use App\Entity\User;
+use App\Enum\UserRole;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -110,16 +111,35 @@ final class AdminAuthenticationTest extends WebTestCase
         self::assertResponseRedirects('/admin/login');
         $crawler = $this->client->followRedirect();
 
-        self::assertStringContainsString('Your account has been disabled.', $crawler->filter('body')->text());
+        self::assertStringContainsString('Invalid credentials.', $crawler->filter('body')->text());
     }
 
-    private function createStaffUser(bool $isActive = true): User
+    public function testMemberWithoutAdminRoleCannotLogIn(): void
+    {
+        $this->createStaffUser(roles: [UserRole::Member->value]);
+
+        $this->client->request('GET', '/admin/login');
+        $this->client->submitForm('Sign in', [
+            '_username' => 'staff@example.com',
+            '_password' => 'changeme123',
+        ]);
+
+        self::assertResponseRedirects('/admin/login');
+        $crawler = $this->client->followRedirect();
+
+        self::assertStringContainsString('Invalid credentials.', $crawler->filter('body')->text());
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    private function createStaffUser(bool $isActive = true, array $roles = [UserRole::Admin->value]): User
     {
         $user = (new User())
             ->setEmail('staff@example.com')
             ->setFirstName('Staff')
             ->setLastName('User')
-            ->setRoles(['ROLE_STAFF'])
+            ->setRoles($roles)
             ->setIsActive($isActive);
 
         $user->setPassword(password_hash('changeme123', PASSWORD_BCRYPT));

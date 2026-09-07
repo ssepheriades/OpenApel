@@ -80,6 +80,7 @@ asso-cms/
 **Routing global :**
 - `/admin/*` → EasyAdmin (Twig, staff authentifié)
 - `/api/*` → API Platform (JSON, public en lecture)
+- `/media/{mapping}/{filename}` → `MediaController` (fichiers hors `public/`)
 - `/*` → SPA Vue 3 (catch-all, sert `index.html`)
 
 ## Conventions de code
@@ -250,7 +251,7 @@ npm run format
 - CSRF actif sur tous les formulaires Twig (EasyAdmin)
 - L'API publique est en **lecture seule** sans auth, écriture réservée à `ROLE_STAFF`
 - Sanitization du HTML rendu depuis Markdown via `league/commonmark` côté serveur + `DOMPurify` côté client
-- Upload de fichiers : whitelist d'extensions strict, validation MIME côté serveur, stockage hors du document root
+- Upload de fichiers : whitelist d'extensions strict, validation MIME côté serveur, stockage hors du document root (`UPLOAD_DIR` / `var/storage/{APP_INSTANCE}/{mapping}/`). Serving via `GET /media/{mapping}/{filename}` (`MediaController`) : `photos`, `branding` et `documents` publics. La visibilité d'un document téléchargeable (entité `Document`) est filtrée en API (`DocumentVisibilityExtension`) ; un fichier masqué n'apparaît plus dans `GET /api/documents`.
 - En-têtes de sécurité (CSP, HSTS, X-Frame-Options) configurés au niveau Caddy
 
 ## RGPD
@@ -270,9 +271,9 @@ Le projet est conçu pour être déployé en plusieurs instances indépendantes 
 - **Une base PostgreSQL par instance** (pas de multi-tenant logique en BDD)
 - Configuration par variables d'environnement (`.env.local` par déploiement)
 - Routage par sous-domaine ou vhost (`asso1.domaine.fr`, `asso2.domaine.fr`)
-- Répertoire d'uploads séparé par instance au déploiement
+- Répertoire d'uploads séparé par instance : `APP_INSTANCE` (slug obligatoire dans `.env` / `.env.local` / `.env.test`) + `UPLOAD_DIR` (défaut `%kernel.project_dir%/var/storage`). Chemin disque : `{UPLOAD_DIR}/{APP_INSTANCE}/{photos|branding|documents}/`. Les URLs publiques restent `/media/{mapping}/...` (le vhost isole les instances).
 - Pas de référence en dur à un nom d'asso dans le code : l'identité du site (nom, baseline, logo, favicon, contact, réseaux, couleurs, bornes d'année scolaire) est stockée en BDD dans l'entité singleton `SiteSettings` (1 ligne, `id = 1`), éditable via "Réglages du site" dans EasyAdmin. Elle est exposée par `SiteSettingsProvider` (cache), `GET /api/site_settings` côté SPA et la fonction Twig `site_settings()` côté templates. Les dates `schoolYearStart` / `schoolYearEnd` ne conservent que le jour et le mois (l'année scolaire en cours est calculée à la volée).
-- Les textes uniques (bandeaux, intro accueil, mentions légales) sont des lignes de l'entité `Page`, une par slug du catalogue `PageSlug`. Le staff les édite dans EasyAdmin (Pages) mais ne crée pas de slug. La visibilité des rubriques (FAQ, équipe, actualités, agenda) et des pages juridiques est le booléen `Page.visible`. API : `GET /api/pages` et `GET /api/pages/{slug}`.
+- Les textes uniques (bandeaux, intro accueil, mentions légales) sont des lignes de l'entité `Page`, une par slug du catalogue `PageSlug`. Le staff les édite dans EasyAdmin (Pages) mais ne crée pas de slug. La visibilité des rubriques (FAQ, documents, équipe, actualités, agenda) et des pages juridiques est le booléen `Page.visible`. API : `GET /api/pages` et `GET /api/pages/{slug}`.
 
 ## Référence rapide des choix de conception
 
@@ -289,6 +290,7 @@ Le projet est conçu pour être déployé en plusieurs instances indépendantes 
 | Rendu Markdown | Côté serveur (CommonMark) | SEO, sécurité, perf SPA |
 | Style frontend | Vuetify 3 | Connaissance préalable, composants Material Design prêts à l'emploi |
 | TypeScript Vue | Oui | Robustesse, autocomplétion |
+| Fuseau horaire | `Europe/Paris` (PHP `AppTimezone` + `Intl` Vue) | Datetimes naive en BDD ; l’admin saisit l’heure civile FR, l’API et la SPA doivent afficher la même |
 
 ---
 

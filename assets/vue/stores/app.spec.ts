@@ -23,7 +23,7 @@ const mockedFetchPages = vi.mocked(fetchPages);
 const sampleSettings: SiteSettings = {
     siteName: 'APEL Démo',
     baseline: 'Ensemble pour nos enfants',
-    logoUrl: 'http://localhost/uploads/branding/logo.png',
+    logoUrl: 'http://localhost/media/branding/logo.png',
     faviconUrl: null,
     contactEmail: 'contact@example.org',
     facebookUrl: null,
@@ -39,6 +39,7 @@ const samplePages: SitePage[] = [
     { slug: 'news', kind: 'section', title: 'Actualités', subtitle: "Les nouvelles de l'association", body: null, visible: true },
     { slug: 'agenda', kind: 'section', title: 'Agenda', subtitle: 'Les dates', body: null, visible: true },
     { slug: 'faq', kind: 'section', title: 'FAQ', subtitle: 'Les questions', body: null, visible: true },
+    { slug: 'documents', kind: 'section', title: 'Documents', subtitle: 'Les fichiers', body: null, visible: true },
     { slug: 'team', kind: 'section', title: 'Le bureau', subtitle: null, body: null, visible: true },
     { slug: 'contact', kind: 'section', title: 'Contact', subtitle: 'Écrivez-nous', body: null, visible: true },
     { slug: 'mentions-legales', kind: 'document', title: 'Mentions légales', subtitle: null, body: 'Éditeur.', visible: true },
@@ -150,6 +151,7 @@ describe('useAppStore', () => {
 
         expect(store.pagesError).toBe('pages down');
         expect(store.pageContent('faq').title).toBe('FAQ');
+        expect(store.pageContent('documents').title).toBe('Documents');
         expect(store.pageContent('team').title).toBe('Équipe');
         expect(store.pageContent('contact').subtitle).toContain('Écrivez-nous');
         expect(store.documentPages).toHaveLength(2);
@@ -160,6 +162,7 @@ describe('useAppStore', () => {
 
         expect(store.isRouteVisible('home')).toBe(true);
         expect(store.isRouteVisible('faq')).toBe(true);
+        expect(store.isRouteVisible('documents')).toBe(true);
         expect(store.isRouteVisible('team')).toBe(true);
         expect(store.isRouteVisible('news')).toBe(true);
         expect(store.isRouteVisible('news-detail')).toBe(true);
@@ -170,7 +173,7 @@ describe('useAppStore', () => {
         mockedFetchSettings.mockResolvedValue(sampleSettings);
         mockedFetchPages.mockResolvedValue(
             samplePages.map((page) =>
-                page.slug === 'news' || page.slug === 'faq' ? { ...page, visible: false } : page,
+                page.slug === 'news' || page.slug === 'faq' || page.slug === 'documents' ? { ...page, visible: false } : page,
             ),
         );
         const store = useAppStore();
@@ -183,6 +186,7 @@ describe('useAppStore', () => {
         expect(store.isRouteVisible('news')).toBe(false);
         expect(store.isRouteVisible('news-detail')).toBe(false);
         expect(store.isRouteVisible('faq')).toBe(false);
+        expect(store.isRouteVisible('documents')).toBe(false);
     });
 
     it('hides legal documents when their visible flag is off', async () => {

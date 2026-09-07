@@ -13,6 +13,7 @@ enum PageSlug: string
     case News = 'news';
     case Agenda = 'agenda';
     case Faq = 'faq';
+    case Documents = 'documents';
     case Team = 'team';
     case Contact = 'contact';
     case MentionsLegales = 'mentions-legales';
@@ -43,7 +44,7 @@ enum PageSlug: string
     public function usesSubtitle(): bool
     {
         return match ($this) {
-            self::News, self::Agenda, self::Faq, self::Team, self::Contact => true,
+            self::News, self::Agenda, self::Faq, self::Documents, self::Team, self::Contact => true,
             default => false,
         };
     }
@@ -66,6 +67,7 @@ enum PageSlug: string
             self::News => 'Actualités',
             self::Agenda => 'Agenda',
             self::Faq => 'FAQ',
+            self::Documents => 'Documents',
             self::Team => 'Équipe',
             self::Contact => 'Contact',
             self::MentionsLegales => 'Mentions légales',
@@ -79,6 +81,7 @@ enum PageSlug: string
             self::News => 'Les nouvelles de l\'association',
             self::Agenda => 'Découvrez tous les événements à venir et l\'historique de nos activités',
             self::Faq => 'Les questions les plus fréquentes des familles',
+            self::Documents => 'Comptes rendus, formulaires et documents utiles',
             self::Team => null,
             self::Contact => 'Une question ? Écrivez-nous, nous vous répondrons dès que possible.',
             default => null,

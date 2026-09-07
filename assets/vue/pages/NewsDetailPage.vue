@@ -80,6 +80,14 @@ watch(() => route.params.id, load, { immediate: true });
                         <time :datetime="post.createdAt">{{ formatPostDate(post.createdAt) }}</time>
                     </div>
                     <h1 class="news-article__title">{{ post.title }}</h1>
+                    <v-img
+                        v-if="post.coverImageUrl"
+                        :src="post.coverImageUrl"
+                        alt=""
+                        class="news-article__cover mb-6"
+                        max-height="420"
+                        cover
+                    />
                     <MarkdownContent :source="post.content" />
                 </article>
             </div>
@@ -131,6 +139,10 @@ watch(() => route.params.id, load, { immediate: true });
     line-height: 1.25;
     color: rgb(var(--v-theme-primary));
     letter-spacing: -0.02em;
+}
+
+.news-article__cover {
+    border-radius: 12px;
 }
 
 @media (max-width: 600px) {

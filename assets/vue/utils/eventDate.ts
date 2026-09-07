@@ -1,3 +1,5 @@
+import { APP_TIMEZONE } from './timezone';
+
 export interface EventSchedule {
     startsAt: string;
     endsAt: string | null;
@@ -8,12 +10,21 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
+    timeZone: APP_TIMEZONE,
 });
 
 const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
+    timeZone: APP_TIMEZONE,
+});
+
+const calendarDayFormatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: APP_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
 });
 
 export function formatEventDate(iso: string): string {
@@ -47,8 +58,5 @@ function formatTime(iso: string): string {
 }
 
 function isSameLocalDay(left: string, right: string): boolean {
-    const a = new Date(left);
-    const b = new Date(right);
-
-    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    return calendarDayFormatter.format(new Date(left)) === calendarDayFormatter.format(new Date(right));
 }

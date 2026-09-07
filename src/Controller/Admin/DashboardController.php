@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ContactMessage;
 use App\Entity\ContentTheme;
+use App\Entity\Document;
 use App\Entity\Event;
 use App\Entity\Faq;
 use App\Entity\Grade;
@@ -66,6 +67,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Events', 'fa fa-calendar', Event::class);
         yield MenuItem::linkToCrud('Posts', 'fa fa-newspaper', Post::class);
         yield MenuItem::linkToCrud('FAQs', 'fa fa-question-circle', Faq::class);
+        yield MenuItem::linkToCrud('Documents', 'fa fa-file', Document::class);
         yield MenuItem::linkToCrud('Pages', 'fa fa-file-text', Page::class);
         yield MenuItem::linkToCrud('Thèmes', 'fa fa-tags', ContentTheme::class);
         yield MenuItem::section('Messages');

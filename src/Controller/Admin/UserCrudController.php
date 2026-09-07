@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Enum\MediaMapping;
 use App\Enum\UserRole;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -63,7 +64,7 @@ final class UserCrudController extends AbstractCrudController
             ->renderExpanded()
             ->renderAsBadges();
         yield ImageField::new('photoFilename', 'Photo')
-            ->setBasePath('/uploads/photos')
+            ->setBasePath(MediaMapping::Photos->uriPrefix())
             ->onlyOnIndex();
         yield Field::new('photoFile', 'Photo')
             ->setFormType(VichImageType::class)

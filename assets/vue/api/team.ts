@@ -5,7 +5,6 @@ export interface TeamMember {
     firstName: string;
     lastName: string;
     position: string | null;
-    phone: string | null;
     photoUrl: string | null;
 }
 

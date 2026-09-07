@@ -32,6 +32,7 @@
 
 ###> Upload files ###
 /public/uploads/
+/var/storage/
 ###< Upload files ###
 
 ###> liip/imagine-bundle ###

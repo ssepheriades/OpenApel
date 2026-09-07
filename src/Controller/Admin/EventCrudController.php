@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\AppTimezone;
 use App\Controller\Admin\Field\MarkdownEditorField;
 use App\Entity\Event;
 use App\Enum\EventState;
 use App\Enum\EventType;
 use App\Enum\EventVisibility;
+use App\Enum\MediaMapping;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -34,6 +36,7 @@ final class EventCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Event')
             ->setEntityLabelInPlural('Events')
+            ->setTimezone(AppTimezone::NAME)
             ->setDefaultSort(['startsAt' => 'DESC']);
     }
 
@@ -77,14 +80,14 @@ final class EventCrudController extends AbstractCrudController
             ->setFormTypeOption('by_reference', false)
             ->autocomplete();
         yield ImageField::new('heroImageFilename', 'Hero')
-            ->setBasePath('/uploads/photos')
+            ->setBasePath(MediaMapping::Photos->uriPrefix())
             ->onlyOnIndex();
         yield Field::new('heroImageFile', 'Hero')
             ->setFormType(VichImageType::class)
             ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false, 'image_uri' => false])
             ->onlyOnForms();
         yield ImageField::new('flyerImageFilename', 'Flyer')
-            ->setBasePath('/uploads/photos')
+            ->setBasePath(MediaMapping::Photos->uriPrefix())
             ->onlyOnIndex();
         yield Field::new('flyerImageFile', 'Flyer')
             ->setFormType(VichImageType::class)

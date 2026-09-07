@@ -19,6 +19,14 @@ const excerpt = computed(() => excerptFromMarkdown(props.post.content));
         :to="{ name: 'news-detail', params: { id: post.id } }"
         elevation="0"
     >
+        <v-img
+            v-if="post.coverImageUrl"
+            :src="post.coverImageUrl"
+            alt=""
+            class="post-card__cover"
+            height="180"
+            cover
+        />
         <v-card-text class="post-card__body">
             <div class="post-card__meta">
                 <ThemeChip :theme="post.theme" />
@@ -36,6 +44,7 @@ const excerpt = computed(() => excerptFromMarkdown(props.post.content));
 <style scoped>
 .post-card {
     height: 100%;
+    overflow: hidden;
     border-radius: 16px;
     border: 1px solid rgba(var(--v-theme-primary), 0.08);
     background: #fff;
@@ -50,6 +59,10 @@ const excerpt = computed(() => excerptFromMarkdown(props.post.content));
     transform: translateY(-6px);
     border-color: rgba(var(--v-theme-secondary), 0.55);
     box-shadow: 0 18px 36px -18px rgba(var(--v-theme-primary), 0.4);
+}
+
+.post-card__cover {
+    border-radius: 16px 16px 0 0;
 }
 
 .post-card__body {

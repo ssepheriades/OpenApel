@@ -8,6 +8,8 @@ if (!file_exists(dirname(__DIR__).'/vendor/autoload.php')) {
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
+\App\AppTimezone::apply();
+
 if (file_exists(dirname(__DIR__).'/.env.test.local')) {
     require dirname(__DIR__).'/.env.test.local';
 } elseif (file_exists(dirname(__DIR__).'/.env.test')) {

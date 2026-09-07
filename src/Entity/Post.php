@@ -9,18 +9,22 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Enum\MediaMapping;
 use App\Enum\PostState;
 use App\Repository\PostRepository;
 use App\Validator\Constraints\ExclusiveGradeOrClass;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ORM\Index(name: 'idx_post_theme', columns: ['theme_id'])]
 #[ORM\Index(name: 'idx_post_state', columns: ['state'])]
 #[ExclusiveGradeOrClass]
+#[Vich\Uploadable]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['post:read', 'audience:read', 'theme:read']]),
@@ -76,6 +80,13 @@ class Post implements AudienceTargetedInterface
     #[Assert\NotNull]
     #[Groups(['post:read'])]
     private ?ContentTheme $theme = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverImageFilename = null;
+
+    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'coverImageFilename')]
+    #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Formats acceptés : JPEG, PNG, WebP.')]
+    private ?File $coverImageFile = null;
 
     public function __construct()
     {
@@ -181,5 +192,47 @@ class Post implements AudienceTargetedInterface
         $this->theme = $theme;
 
         return $this;
+    }
+
+    public function getCoverImageFilename(): ?string
+    {
+        return $this->coverImageFilename;
+    }
+
+    public function setCoverImageFilename(?string $coverImageFilename): static
+    {
+        $this->coverImageFilename = $coverImageFilename;
+
+        return $this;
+    }
+
+    public function getCoverImageFile(): ?File
+    {
+        return $this->coverImageFile;
+    }
+
+    public function setCoverImageFile(?File $coverImageFile): static
+    {
+        $this->coverImageFile = $coverImageFile;
+        $this->touchOnUpload($coverImageFile);
+
+        return $this;
+    }
+
+    #[Groups(['post:read'])]
+    public function getCoverImageUrl(): ?string
+    {
+        return MediaMapping::Photos->url($this->coverImageFilename);
+    }
+
+    /**
+     * Vich only moves the file when Doctrine detects a change on the entity,
+     * so a fresh upload must dirty a mapped column.
+     */
+    private function touchOnUpload(?File $file): void
+    {
+        if (null !== $file) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 }

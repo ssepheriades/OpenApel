@@ -55,7 +55,7 @@ final readonly class PageResource
             kind: $view->kind,
             title: $view->title,
             subtitle: $view->subtitle,
-            body: $view->body,
+            body: $view->visible ? $view->body : null,
             visible: $view->visible,
         );
     }

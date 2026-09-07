@@ -32,12 +32,6 @@ final readonly class TeamMember
         #[Groups(['team_member:read'])]
         public ?string $position,
         #[Groups(['team_member:read'])]
-        public ?string $phone,
-        #[Groups(['team_member:read'])]
-        public ?string $shortBio,
-        #[Groups(['team_member:read'])]
-        public ?string $bio,
-        #[Groups(['team_member:read'])]
         public ?string $photoUrl,
     ) {
     }

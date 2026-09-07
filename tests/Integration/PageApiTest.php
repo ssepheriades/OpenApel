@@ -80,6 +80,42 @@ final class PageApiTest extends WebTestCase
         self::assertArrayNotHasKey('updatedAt', $faq);
     }
 
+    public function testHiddenPageBodyIsNotExposed(): void
+    {
+        $repository = static::getContainer()->get(PageRepository::class);
+        $pages = $repository->ensureCatalog();
+        foreach ($pages as $page) {
+            if (PageSlug::MentionsLegales === $page->getSlug()) {
+                $page->setBody('Brouillon confidentiel des mentions.')->setVisible(false);
+            }
+        }
+        $this->entityManager->flush();
+        static::getContainer()->get(PageCatalogProvider::class)->invalidate();
+
+        $this->client->request('GET', '/api/pages', server: ['HTTP_ACCEPT' => 'application/json']);
+
+        self::assertResponseIsSuccessful();
+        $collection = json_decode((string) $this->client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        self::assertIsArray($collection);
+
+        $mentions = null;
+        foreach ($collection as $item) {
+            if (($item['slug'] ?? null) === 'mentions-legales') {
+                $mentions = $item;
+                break;
+            }
+        }
+
+        self::assertIsArray($mentions);
+        self::assertFalse($mentions['visible']);
+        self::assertNull($mentions['body']);
+        self::assertSame('Mentions légales', $mentions['title']);
+
+        $this->client->request('GET', '/api/pages/mentions-legales', server: ['HTTP_ACCEPT' => 'application/json']);
+
+        self::assertResponseStatusCodeSame(404);
+    }
+
     public function testUnknownSlugIsNotFound(): void
     {
         static::getContainer()->get(PageRepository::class)->ensureCatalog();

@@ -27,7 +27,7 @@ final class SiteSettingsProviderTest extends TestCase
 
         self::assertInstanceOf(SiteSettingsView::class, $first);
         self::assertSame('APEL Test', $first->siteName);
-        self::assertSame('/uploads/branding/logo.png', $first->logoUrl);
+        self::assertSame('/media/branding/logo.png', $first->logoUrl);
         self::assertNull($first->faviconUrl);
         self::assertEquals($first, $second);
 

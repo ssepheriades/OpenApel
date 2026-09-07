@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\Admin\Field\MarkdownEditorField;
 use App\Entity\Post;
+use App\Enum\MediaMapping;
 use App\Enum\PostState;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -13,9 +14,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class PostCrudController extends AbstractCrudController
 {
@@ -55,6 +59,13 @@ final class PostCrudController extends AbstractCrudController
             ->setHelp('Laisser vide pour toute l’école. Ne pas combiner avec des niveaux.')
             ->setFormTypeOption('by_reference', false)
             ->autocomplete();
+        yield ImageField::new('coverImageFilename', 'Image')
+            ->setBasePath(MediaMapping::Photos->uriPrefix())
+            ->onlyOnIndex();
+        yield Field::new('coverImageFile', 'Image')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false, 'image_uri' => false])
+            ->onlyOnForms();
         yield IntegerField::new('viewCount')->hideOnForm();
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();

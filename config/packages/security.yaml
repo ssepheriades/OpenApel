@@ -15,6 +15,7 @@ security:
 
         admin:
             pattern: ^/admin
+            context: main
             lazy: true
             provider: app_user_provider
             user_checker: App\Security\AdminUserChecker
@@ -36,6 +37,7 @@ security:
 
         main:
             lazy: true
+            context: main
 
     access_control:
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }

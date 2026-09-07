@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Entity\SiteSettings;
+use App\Enum\MediaMapping;
 
 /**
  * Cache-friendly, read-only snapshot of the site settings.
@@ -12,8 +13,6 @@ use App\Entity\SiteSettings;
  */
 final readonly class SiteSettingsView
 {
-    public const string UPLOAD_URI_PREFIX = '/uploads/branding/';
-
     public function __construct(
         public string $siteName,
         public ?string $baseline,
@@ -35,8 +34,8 @@ final readonly class SiteSettingsView
         return new self(
             siteName: $settings->getSiteName(),
             baseline: $settings->getBaseline(),
-            logoUrl: self::uploadUrl($settings->getLogoFilename()),
-            faviconUrl: self::uploadUrl($settings->getFaviconFilename()),
+            logoUrl: MediaMapping::Branding->url($settings->getLogoFilename()),
+            faviconUrl: MediaMapping::Branding->url($settings->getFaviconFilename()),
             contactEmail: $settings->getContactEmail(),
             contactEmailEnabled: $settings->isContactEmailEnabled(),
             facebookUrl: $settings->getFacebookUrl(),
@@ -46,10 +45,5 @@ final readonly class SiteSettingsView
             schoolYearStart: $settings->getSchoolYearStart()->format('Y-m-d'),
             schoolYearEnd: $settings->getSchoolYearEnd()->format('Y-m-d'),
         );
-    }
-
-    private static function uploadUrl(?string $filename): ?string
-    {
-        return null === $filename ? null : self::UPLOAD_URI_PREFIX . $filename;
     }
 }

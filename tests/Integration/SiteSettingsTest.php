@@ -69,7 +69,7 @@ final class SiteSettingsTest extends WebTestCase
         self::assertSame('Ensemble pour nos enfants', $payload['baseline']);
         self::assertArrayNotHasKey('homeTitle', $payload);
         self::assertArrayNotHasKey('homeText', $payload);
-        self::assertSame('http://localhost/uploads/branding/logo.png', $payload['logoUrl']);
+        self::assertSame('http://localhost/media/branding/logo.png', $payload['logoUrl']);
         self::assertNull($payload['faviconUrl']);
         self::assertSame(SiteSettings::DEFAULT_PRIMARY_COLOR, $payload['primaryColor']);
         self::assertSame(SiteSettings::DEFAULT_SCHOOL_YEAR_START, $payload['schoolYearStart']);
