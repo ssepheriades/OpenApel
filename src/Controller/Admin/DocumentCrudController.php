@@ -32,7 +32,7 @@ final class DocumentCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Documents')
             ->setPageTitle(Crud::PAGE_INDEX, 'Documents')
             ->setDefaultSort(['date' => 'DESC'])
-            ->setEntityValidationGroups(['Default', 'unique']);
+            ->setFormOptions(['validation_groups' => ['Default', 'unique']]);
     }
 
     public function createEntity(string $entityFqcn): Document
