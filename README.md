@@ -114,6 +114,7 @@ Les associations gèrent des données de familles, parfois d'enfants. Le projet 
 - Markdown assaini dans la SPA (`markdown-it` sans HTML brut, puis DOMPurify)
 - pages juridiques prévues dans le catalogue (`mentions-legales`, `politique-de-confidentialite`)
 - pas d'analytics tiers dans le cœur du projet
+- pas d'indexation par les moteurs de recherche ni d'opt-in crawl IA (`robots.txt`, meta noindex, en-tête `X-Robots-Tag`)
 
 À la charge de chaque instance : hébergement, mentions légales réelles, et autorisations parentales avant publication de photos d'enfants.
 

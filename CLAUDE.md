@@ -251,6 +251,7 @@ npm run format
 - L'API publique est en **lecture seule** sans auth, écriture réservée à `ROLE_STAFF`
 - Sanitization du HTML rendu depuis Markdown uniquement dans la SPA (`markdown-it` avec `html: false`, puis DOMPurify). L'API expose le Markdown brut.
 - Upload de fichiers : whitelist d'extensions strict, validation MIME côté serveur, stockage hors du document root (`UPLOAD_DIR` / `var/storage/{APP_INSTANCE}/{mapping}/`). Serving via `GET /media/{mapping}/{filename}` (`MediaController`) : `photos` et `branding` publics. Un document téléchargeable n'est servi que si l'entité `Document` est visible, ou si le visiteur a `ROLE_ADMIN` ; un fichier masqué, orphelin ou inconnu répond 404. L'API (`DocumentVisibilityExtension`) ne liste que les documents visibles dans `GET /api/documents`.
+- Indexation volontairement refusée (outil de communication interne aux familles, pas un site vitrine) : meta `robots` / `googlebot` `noindex, nofollow, noarchive, nosnippet, noimageindex` dans `templates/base.html.twig` (SPA + login), en-tête `X-Robots-Tag` identique via `NoindexHeaderListener` sur **toutes** les réponses principales (admin EasyAdmin, API JSON, médias, 404), `GET /robots.txt` (`Disallow: /` + user-agents IA). Ce n'est **pas** une authentification : le site reste public pour qui a l'URL.
 - En-têtes de sécurité (CSP, HSTS, X-Frame-Options) configurés au niveau Caddy
 
 ## RGPD
@@ -262,6 +263,7 @@ L'asso gère des données potentiellement liées à des mineurs et à des famill
 - Page "mentions légales" et "politique de confidentialité" obligatoires (catalogue `Page`, slugs `mentions-legales` et `politique-de-confidentialite`)
 - Formulaire de contact : pas de stockage en BDD au-delà du nécessaire, ou suppression auto après X jours
 - Photos des enfants : **toujours** vérifier l'autorisation parentale avant publication (à gérer côté process, mais prévoir un champ "autorisation reçue" sur les médias concernés)
+- Pas d'indexation ni de crawl IA volontaire : limite la diffusion des contenus famille/enfants hors du cercle des parents qui ont l'URL (complète l'absence d'analytics tiers ; ce n'est pas un contrôle d'accès)
 
 ## Multi-instances
 
