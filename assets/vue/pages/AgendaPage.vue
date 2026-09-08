@@ -93,15 +93,17 @@ onMounted(async () => {
             </div>
 
             <!-- Timeline -->
-            <v-timeline v-else side="end" :density="smAndDown ? 'compact' : 'comfortable'">
-                <EventTimelineItem
-                    v-for="event in events"
-                    :key="event.slug"
-                    :event="event"
-                    :is-past="isPastEvent(event)"
-                    :anchor-id="event.slug === nextEventSlug ? 'agenda-next-event' : undefined"
-                />
-            </v-timeline>
+            <div v-else class="agenda-timeline">
+                <v-timeline side="end" :density="smAndDown ? 'compact' : 'comfortable'">
+                    <EventTimelineItem
+                        v-for="event in events"
+                        :key="event.slug"
+                        :event="event"
+                        :is-past="isPastEvent(event)"
+                        :anchor-id="event.slug === nextEventSlug ? 'agenda-next-event' : undefined"
+                    />
+                </v-timeline>
+            </div>
         </v-container>
     </div>
 </template>
@@ -110,6 +112,21 @@ onMounted(async () => {
 .agenda-page {
     min-height: 100vh;
     background: linear-gradient(to bottom, #f5f5f5 0%, #ffffff 100%);
+}
+
+.agenda-timeline {
+    max-width: 48rem;
+    margin-inline: auto;
+}
+
+.agenda-timeline :deep(.v-timeline) {
+    width: 100%;
+    grid-template-columns: min-content min-content minmax(0, 1fr);
+}
+
+.agenda-timeline :deep(.v-timeline-item__body) {
+    width: 100%;
+    justify-self: stretch;
 }
 
 :deep(#agenda-next-event) {

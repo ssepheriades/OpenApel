@@ -138,6 +138,7 @@ const chipColor = computed(() => {
 
 <style scoped>
 .event-card {
+    width: 100%;
     scroll-margin-top: 5rem;
     overflow: hidden;
     border: 1px solid rgb(var(--v-theme-secondary));
