@@ -21,7 +21,11 @@ final class EventVisibilityExtension implements QueryCollectionExtensionInterfac
         ?Operation $operation = null,
         array $context = [],
     ): void {
-        $this->restrictToPublicVisibilities($queryBuilder, $resourceClass);
+        $this->restrictToVisibilities(
+            $queryBuilder,
+            $resourceClass,
+            [EventVisibility::Visible, EventVisibility::GreyedOut],
+        );
     }
 
     public function applyToItem(
@@ -32,10 +36,17 @@ final class EventVisibilityExtension implements QueryCollectionExtensionInterfac
         ?Operation $operation = null,
         array $context = [],
     ): void {
-        $this->restrictToPublicVisibilities($queryBuilder, $resourceClass);
+        $this->restrictToVisibilities(
+            $queryBuilder,
+            $resourceClass,
+            [EventVisibility::Visible],
+        );
     }
 
-    private function restrictToPublicVisibilities(QueryBuilder $queryBuilder, string $resourceClass): void
+    /**
+     * @param list<EventVisibility> $visibilities
+     */
+    private function restrictToVisibilities(QueryBuilder $queryBuilder, string $resourceClass, array $visibilities): void
     {
         if (Event::class !== $resourceClass) {
             return;
@@ -44,6 +55,6 @@ final class EventVisibilityExtension implements QueryCollectionExtensionInterfac
         $alias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
             ->andWhere(sprintf('%s.visibility IN (:visibilities)', $alias))
-            ->setParameter('visibilities', [EventVisibility::Visible, EventVisibility::GreyedOut]);
+            ->setParameter('visibilities', $visibilities);
     }
 }

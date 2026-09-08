@@ -16,10 +16,12 @@ export interface Event {
     ticketingUrl: string | null;
     type: EventType;
     state: EventState;
-    visibility: EventVisibility;
-    isAllDay: boolean | null;
+    visibility: EventVisibility | null;
+    isAllDay?: boolean;
     grades: Grade[];
     schoolClasses: SchoolClass[];
+    heroImageUrl?: string | null;
+    flyerImageUrl?: string | null;
 }
 
 export async function fetchEvents(range?: { after: string; strictlyBefore: string }): Promise<Event[]> {
@@ -32,6 +34,12 @@ export async function fetchEvents(range?: { after: string; strictlyBefore: strin
     const query = params.toString();
 
     return client.request<Event[]>(`/events${query ? `?${query}` : ''}`, {
+        headers: { Accept: 'application/json' },
+    });
+}
+
+export async function fetchEvent(id: number): Promise<Event> {
+    return client.request<Event>(`/events/${id}`, {
         headers: { Accept: 'application/json' },
     });
 }

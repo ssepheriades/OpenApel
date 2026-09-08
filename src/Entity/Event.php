@@ -8,7 +8,9 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\AppTimezone;
 use App\Enum\EventState;
 use App\Enum\EventType;
 use App\Enum\EventVisibility;
@@ -20,6 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -27,6 +30,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ExclusiveGradeOrClass]
 #[ApiResource(
     operations: [
+        new Get(normalizationContext: ['groups' => ['event:read', 'audience:read']]),
         new GetCollection(
             normalizationContext: ['groups' => ['event:read', 'audience:read']],
             order: ['startsAt' => 'ASC'],
@@ -56,6 +60,7 @@ class Event implements AudienceTargetedInterface
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'La date de début est obligatoire.')]
     #[Groups(['event:read'])]
     private ?\DateTimeImmutable $startsAt = null;
 
@@ -87,9 +92,16 @@ class Event implements AudienceTargetedInterface
     #[Groups(['event:read'])]
     private ?EventVisibility $visibility = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(options: ['default' => false])]
     #[Groups(['event:read'])]
-    private ?bool $isAllDay = null;
+    private bool $isAllDay = false;
+
+    /**
+     * Admin date-only fields; persisted into startsAt/endsAt by EventScheduleNormalizer.
+     */
+    private ?\DateTimeImmutable $allDayStartsOn = null;
+
+    private ?\DateTimeImmutable $allDayEndsOn = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
@@ -147,7 +159,7 @@ class Event implements AudienceTargetedInterface
         return $this->startsAt;
     }
 
-    public function setStartsAt(\DateTimeImmutable $startsAt): static
+    public function setStartsAt(?\DateTimeImmutable $startsAt): static
     {
         $this->startsAt = $startsAt;
 
@@ -238,14 +250,42 @@ class Event implements AudienceTargetedInterface
         return $this;
     }
 
-    public function isAllDay(): ?bool
+    public function isAllDay(): bool
     {
         return $this->isAllDay;
     }
 
-    public function setIsAllDay(?bool $isAllDay): static
+    public function setIsAllDay(bool $isAllDay): static
     {
         $this->isAllDay = $isAllDay;
+
+        return $this;
+    }
+
+    public function getAllDayStartsOn(): ?\DateTimeImmutable
+    {
+        return $this->allDayStartsOn ?? $this->startsAt;
+    }
+
+    public function setAllDayStartsOn(?\DateTimeImmutable $allDayStartsOn): static
+    {
+        $this->allDayStartsOn = $allDayStartsOn;
+
+        return $this;
+    }
+
+    public function getAllDayEndsOn(): ?\DateTimeImmutable
+    {
+        if (null !== $this->allDayEndsOn) {
+            return $this->allDayEndsOn;
+        }
+
+        return $this->isAllDay ? $this->endsAt : null;
+    }
+
+    public function setAllDayEndsOn(?\DateTimeImmutable $allDayEndsOn): static
+    {
+        $this->allDayEndsOn = $allDayEndsOn;
 
         return $this;
     }
@@ -333,5 +373,34 @@ class Event implements AudienceTargetedInterface
     public function getFlyerImageUrl(): ?string
     {
         return MediaMapping::Photos->url($this->flyerImageFilename);
+    }
+
+    #[Assert\Callback]
+    public function validateSchedule(ExecutionContextInterface $context): void
+    {
+        if (null === $this->startsAt || null === $this->endsAt) {
+            return;
+        }
+
+        if ($this->isAllDay) {
+            if ($this->civilDay($this->endsAt) < $this->civilDay($this->startsAt)) {
+                $context->buildViolation('La date de fin doit être le même jour ou après le début.')
+                    ->atPath('allDayEndsOn')
+                    ->addViolation();
+            }
+
+            return;
+        }
+
+        if ($this->endsAt < $this->startsAt) {
+            $context->buildViolation('La fin doit être après le début.')
+                ->atPath('endsAt')
+                ->addViolation();
+        }
+    }
+
+    private function civilDay(\DateTimeImmutable $date): string
+    {
+        return $date->setTimezone(new \DateTimeZone(AppTimezone::NAME))->format('Y-m-d');
     }
 }

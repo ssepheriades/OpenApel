@@ -174,6 +174,7 @@ describe('useAppStore', () => {
         expect(store.isRouteVisible('news')).toBe(false);
         expect(store.isRouteVisible('news-detail')).toBe(false);
         expect(store.isRouteVisible('agenda')).toBe(false);
+        expect(store.isRouteVisible('agenda-detail')).toBe(false);
     });
 
     it('keeps the last catalogue if a later pages fetch fails', async () => {
@@ -206,6 +207,7 @@ describe('useAppStore', () => {
         expect(store.isRouteVisible('home')).toBe(true);
         expect(store.isRouteVisible('team')).toBe(true);
         expect(store.isRouteVisible('agenda')).toBe(true);
+        expect(store.isRouteVisible('agenda-detail')).toBe(true);
         expect(store.isRouteVisible('news')).toBe(false);
         expect(store.isRouteVisible('news-detail')).toBe(false);
         expect(store.isRouteVisible('faq')).toBe(false);

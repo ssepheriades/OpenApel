@@ -1,0 +1,6 @@
+.js-event-timed-field[hidden],
+.js-event-all-day-field[hidden],
+.form-group.js-event-timed-field[hidden],
+.form-group.js-event-all-day-field[hidden] {
+    display: none !important;
+}

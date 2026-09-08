@@ -18,6 +18,7 @@ const ROUTE_PAGE_SLUG: Partial<Record<string, PageSlug>> = {
     news: 'news',
     'news-detail': 'news',
     agenda: 'agenda',
+    'agenda-detail': 'agenda',
     faq: 'faq',
     documents: 'documents',
     team: 'team',

@@ -49,7 +49,7 @@ final class EventVisibilityExtensionTest extends TestCase
         );
     }
 
-    public function testItemRestrictsEventToPublicVisibilities(): void
+    public function testItemRestrictsEventToVisibleOnly(): void
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->method('getRootAliases')->willReturn(['e']);
@@ -59,7 +59,7 @@ final class EventVisibilityExtensionTest extends TestCase
             ->willReturnSelf();
         $queryBuilder->expects(self::once())
             ->method('setParameter')
-            ->with('visibilities', [EventVisibility::Visible, EventVisibility::GreyedOut])
+            ->with('visibilities', [EventVisibility::Visible])
             ->willReturnSelf();
 
         $extension = new EventVisibilityExtension();
@@ -67,6 +67,21 @@ final class EventVisibilityExtensionTest extends TestCase
             $queryBuilder,
             $this->createMock(QueryNameGeneratorInterface::class),
             Event::class,
+            ['id' => 1],
+        );
+    }
+
+    public function testItemIgnoresOtherResources(): void
+    {
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder->expects(self::never())->method('getRootAliases');
+        $queryBuilder->expects(self::never())->method('andWhere');
+
+        $extension = new EventVisibilityExtension();
+        $extension->applyToItem(
+            $queryBuilder,
+            $this->createMock(QueryNameGeneratorInterface::class),
+            Faq::class,
             ['id' => 1],
         );
     }

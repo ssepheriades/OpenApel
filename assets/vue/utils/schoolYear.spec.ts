@@ -102,4 +102,27 @@ describe('upcoming events', () => {
 
         expect(findNextEventId(events, now)).toBe(10);
     });
+
+    it('treats an all-day event as upcoming until the end of its last day', () => {
+        expect(
+            isUpcomingEvent(
+                {
+                    startsAt: '2026-09-01T00:00:00+02:00',
+                    endsAt: null,
+                    isAllDay: true,
+                },
+                now,
+            ),
+        ).toBe(true);
+        expect(
+            isUpcomingEvent(
+                {
+                    startsAt: '2026-08-31T00:00:00+02:00',
+                    endsAt: null,
+                    isAllDay: true,
+                },
+                now,
+            ),
+        ).toBe(false);
+    });
 });

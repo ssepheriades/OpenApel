@@ -1,3 +1,5 @@
+import { isAllDayCurrent } from './eventDate';
+
 export interface MonthDay {
     month: number;
     day: number;
@@ -71,12 +73,26 @@ export function getSchoolYearRange(
     };
 }
 
-export function isUpcomingEvent(event: { startsAt: string }, now: Date = new Date()): boolean {
+export function isUpcomingEvent(
+    event: { startsAt: string; endsAt?: string | null; isAllDay?: boolean | null },
+    now: Date = new Date(),
+): boolean {
+    if (event.isAllDay) {
+        return isAllDayCurrent(
+            {
+                startsAt: event.startsAt,
+                endsAt: event.endsAt ?? null,
+                isAllDay: true,
+            },
+            now,
+        );
+    }
+
     return new Date(event.startsAt) >= now;
 }
 
 export function findNextEventId(
-    events: Array<{ id: number; startsAt: string }>,
+    events: Array<{ id: number; startsAt: string; endsAt?: string | null; isAllDay?: boolean | null }>,
     now: Date = new Date(),
 ): number | null {
     return events.find((event) => isUpcomingEvent(event, now))?.id ?? null;

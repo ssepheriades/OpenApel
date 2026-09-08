@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatEventDate, formatEventTime } from './eventDate';
+import { formatEventDate, formatEventDateRange, formatEventTime, isAllDayCurrent } from './eventDate';
 
 describe('formatEventDate', () => {
     it('formats a French short date in Europe/Paris', () => {
@@ -62,5 +62,71 @@ describe('formatEventTime', () => {
 
         expect(label).toContain('–');
         expect(label?.toLowerCase()).toContain('mai');
+    });
+});
+
+describe('formatEventDateRange', () => {
+    it('keeps a single day for all-day without end', () => {
+        const label = formatEventDateRange({
+            startsAt: '2026-10-12T00:00:00+02:00',
+            endsAt: null,
+            isAllDay: true,
+        });
+
+        expect(label.toLowerCase()).toContain('oct');
+        expect(label).toMatch(/12/u);
+        expect(label).not.toContain('–');
+    });
+
+    it('joins inclusive civil days for a multi-day all-day event', () => {
+        const label = formatEventDateRange({
+            startsAt: '2026-10-12T00:00:00+02:00',
+            endsAt: '2026-10-16T00:00:00+02:00',
+            isAllDay: true,
+        });
+
+        expect(label).toContain('–');
+        expect(label).toMatch(/12/u);
+        expect(label).toMatch(/16/u);
+    });
+});
+
+describe('isAllDayCurrent', () => {
+    const noon = new Date('2026-09-12T12:00:00+02:00');
+
+    it('keeps a same-day all-day event current after midnight start', () => {
+        expect(
+            isAllDayCurrent(
+                {
+                    startsAt: '2026-09-12T00:00:00+02:00',
+                    endsAt: null,
+                    isAllDay: true,
+                },
+                noon,
+            ),
+        ).toBe(true);
+    });
+
+    it('keeps a multi-day all-day event current until the inclusive end day', () => {
+        expect(
+            isAllDayCurrent(
+                {
+                    startsAt: '2026-09-10T00:00:00+02:00',
+                    endsAt: '2026-09-12T00:00:00+02:00',
+                    isAllDay: true,
+                },
+                noon,
+            ),
+        ).toBe(true);
+        expect(
+            isAllDayCurrent(
+                {
+                    startsAt: '2026-09-10T00:00:00+02:00',
+                    endsAt: '2026-09-11T00:00:00+02:00',
+                    isAllDay: true,
+                },
+                noon,
+            ),
+        ).toBe(false);
     });
 });

@@ -2,6 +2,7 @@ import { Crepe } from '@milkdown/crepe';
 import '@milkdown/crepe/theme/common/style.css';
 import '@milkdown/crepe/theme/frame.css';
 import './markdown-editor.css';
+import { enhanceEventSchedule } from './event-schedule';
 
 async function mountEditor(textarea: HTMLTextAreaElement): Promise<void> {
     if (textarea.dataset.markdownEditorReady === '1') {
@@ -58,6 +59,7 @@ function enhance(): void {
     document.querySelectorAll<HTMLTextAreaElement>('textarea[data-markdown-editor]').forEach((textarea) => {
         void mountEditor(textarea);
     });
+    enhanceEventSchedule();
 }
 
 if (document.readyState === 'loading') {

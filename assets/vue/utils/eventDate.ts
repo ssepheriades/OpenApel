@@ -3,7 +3,7 @@ import { APP_TIMEZONE } from './timezone';
 export interface EventSchedule {
     startsAt: string;
     endsAt: string | null;
-    isAllDay: boolean | null;
+    isAllDay?: boolean | null;
 }
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -31,6 +31,14 @@ export function formatEventDate(iso: string): string {
     return dateFormatter.format(new Date(iso));
 }
 
+export function formatEventDateRange(event: EventSchedule): string {
+    if (!event.endsAt || isSameLocalDay(event.startsAt, event.endsAt)) {
+        return formatEventDate(event.startsAt);
+    }
+
+    return `${formatEventDate(event.startsAt)} – ${formatEventDate(event.endsAt)}`;
+}
+
 export function formatEventTime(event: EventSchedule): string | null {
     if (event.isAllDay) {
         return null;
@@ -51,6 +59,12 @@ export function formatEventTime(event: EventSchedule): string | null {
     }
 
     return `${start} – ${formatEventDate(event.endsAt)} ${end}`;
+}
+
+export function isAllDayCurrent(event: EventSchedule, now: Date = new Date()): boolean {
+    const lastDay = event.endsAt ?? event.startsAt;
+
+    return calendarDayFormatter.format(now) <= calendarDayFormatter.format(new Date(lastDay));
 }
 
 function formatTime(iso: string): string {
