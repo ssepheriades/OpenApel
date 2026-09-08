@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
     DEFAULT_SCHOOL_YEAR_END,
     DEFAULT_SCHOOL_YEAR_START,
-    findNextEventId,
+    findNextEventSlug,
     getSchoolYearRange,
     isUpcomingEvent,
     parseMonthDay,
@@ -75,32 +75,32 @@ describe('upcoming events', () => {
         expect(isUpcomingEvent({ startsAt: '2026-09-01T11:59:59' }, now)).toBe(false);
     });
 
-    it('returns the first upcoming event id', () => {
+    it('returns the first upcoming event slug', () => {
         const events = [
-            { id: 1, startsAt: '2026-08-01T10:00:00' },
-            { id: 2, startsAt: '2026-09-15T10:00:00' },
-            { id: 3, startsAt: '2026-10-01T10:00:00' },
+            { slug: 'rentree', startsAt: '2026-08-01T10:00:00' },
+            { slug: 'kermesse-2026', startsAt: '2026-09-15T10:00:00' },
+            { slug: 'marche-de-noel-2026', startsAt: '2026-10-01T10:00:00' },
         ];
 
-        expect(findNextEventId(events, now)).toBe(2);
+        expect(findNextEventSlug(events, now)).toBe('kermesse-2026');
     });
 
     it('returns null when every event is in the past', () => {
         const events = [
-            { id: 1, startsAt: '2026-08-01T10:00:00' },
-            { id: 2, startsAt: '2026-08-20T10:00:00' },
+            { slug: 'rentree', startsAt: '2026-08-01T10:00:00' },
+            { slug: 'kermesse-2026', startsAt: '2026-08-20T10:00:00' },
         ];
 
-        expect(findNextEventId(events, now)).toBeNull();
+        expect(findNextEventSlug(events, now)).toBeNull();
     });
 
     it('returns the first event when the whole list is upcoming', () => {
         const events = [
-            { id: 10, startsAt: '2026-09-02T00:00:00' },
-            { id: 11, startsAt: '2026-10-01T00:00:00' },
+            { slug: 'conseil-septembre', startsAt: '2026-09-02T00:00:00' },
+            { slug: 'marche-de-noel-2026', startsAt: '2026-10-01T00:00:00' },
         ];
 
-        expect(findNextEventId(events, now)).toBe(10);
+        expect(findNextEventSlug(events, now)).toBe('conseil-septembre');
     });
 
     it('treats an all-day event as upcoming until the end of its last day', () => {

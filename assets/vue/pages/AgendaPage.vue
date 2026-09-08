@@ -9,7 +9,7 @@ import { useAppStore } from '@/stores/app';
 import {
     DEFAULT_SCHOOL_YEAR_END,
     DEFAULT_SCHOOL_YEAR_START,
-    findNextEventId,
+    findNextEventSlug,
     getSchoolYearRange,
     isUpcomingEvent,
     parseMonthDay,
@@ -23,16 +23,16 @@ const events = ref<Event[]>([]);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
 
-const nextEventId = computed(() => findNextEventId(events.value));
+const nextEventSlug = computed(() => findNextEventSlug(events.value));
 
 function isPastEvent(event: Event): boolean {
     return !isUpcomingEvent(event);
 }
 
 watch(
-    [isLoading, nextEventId],
-    async ([loading, id]) => {
-        if (loading || id === null) {
+    [isLoading, nextEventSlug],
+    async ([loading, slug]) => {
+        if (loading || slug === null) {
             return;
         }
 
@@ -96,10 +96,10 @@ onMounted(async () => {
             <v-timeline v-else side="end" :density="smAndDown ? 'compact' : 'comfortable'">
                 <EventTimelineItem
                     v-for="event in events"
-                    :key="event.id"
+                    :key="event.slug"
                     :event="event"
                     :is-past="isPastEvent(event)"
-                    :anchor-id="event.id === nextEventId ? 'agenda-next-event' : undefined"
+                    :anchor-id="event.slug === nextEventSlug ? 'agenda-next-event' : undefined"
                 />
             </v-timeline>
         </v-container>

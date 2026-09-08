@@ -4,6 +4,7 @@ import type { ContentTheme } from './themes';
 
 export interface Post {
     id: number;
+    slug: string;
     title: string;
     content: string;
     theme: ContentTheme;
@@ -19,8 +20,8 @@ export async function fetchPosts(): Promise<Post[]> {
     });
 }
 
-export async function fetchPost(id: number): Promise<Post> {
-    return client.request<Post>(`/posts/${id}`, {
+export async function fetchPost(slug: string): Promise<Post> {
+    return client.request<Post>(`/posts/${encodeURIComponent(slug)}`, {
         headers: { Accept: 'application/json' },
     });
 }

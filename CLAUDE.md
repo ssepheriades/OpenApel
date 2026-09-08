@@ -112,7 +112,7 @@ asso-cms/
 - Une migration par changement logique (pas de migrations fourre-tout)
 - Relations : préférer `LAZY` par défaut, `EAGER` uniquement si justifié
 - Index explicites sur les colonnes filtrées/triées fréquemment
-- UUID v7 pour les identifiants publics, ID auto-incrémenté en interne
+- UUID v7 pour `User`. Identifiant public Post/Event = slug unique titre + année (`/actualites/kermesse-2026`, `/agenda/kermesse-2026`) ; PK interne auto-incrémentée. Catalogues, `Page` (slug catalogue) et `SiteSettings` (singleton) restent en int.
 
 ### Vue 3
 
@@ -290,6 +290,7 @@ Le projet est conçu pour être déployé en plusieurs instances indépendantes 
 | Style frontend | Vuetify 3 | Connaissance préalable, composants Material Design prêts à l'emploi |
 | TypeScript Vue | Oui | Robustesse, autocomplétion |
 | Fuseau horaire | `Europe/Paris` (PHP `AppTimezone` + `Intl` Vue) | Datetimes naive en BDD ; l’admin saisit l’heure civile FR, l’API et la SPA doivent afficher la même |
+| Identifiants publics | Slug Post/Event, UUID `User`, slug catalogue `Page` | URLs stables et lisibles ; PK int en interne |
 
 ---
 

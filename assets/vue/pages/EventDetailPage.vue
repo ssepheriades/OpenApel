@@ -8,6 +8,7 @@ import AudienceChips from '@/components/ui/AudienceChips.vue';
 import MarkdownContent from '@/components/ui/MarkdownContent.vue';
 import PageHero from '@/components/ui/PageHero.vue';
 import { useAppStore } from '@/stores/app';
+import { isContentSlug } from '@/utils/contentSlug';
 import { formatEventDateRange, formatEventTime } from '@/utils/eventDate';
 
 const route = useRoute();
@@ -42,8 +43,8 @@ async function load(): Promise<void> {
     event.value = null;
     flyerOpen.value = false;
 
-    const id = Number(route.params.id);
-    if (!Number.isInteger(id) || id < 1) {
+    const slug = route.params.slug;
+    if (!isContentSlug(slug)) {
         error.value = 'not-found';
         isLoading.value = false;
 
@@ -51,7 +52,7 @@ async function load(): Promise<void> {
     }
 
     try {
-        event.value = await fetchEvent(id);
+        event.value = await fetchEvent(slug);
     } catch (cause) {
         error.value = cause instanceof ApiError && cause.status === 404 ? 'not-found' : 'load';
     } finally {
@@ -59,7 +60,7 @@ async function load(): Promise<void> {
     }
 }
 
-watch(() => route.params.id, load, { immediate: true });
+watch(() => route.params.slug, load, { immediate: true });
 </script>
 
 <template>

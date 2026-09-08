@@ -7,6 +7,7 @@ export type EventVisibility = 'visible' | 'hidden' | 'greyed_out';
 
 export interface Event {
     id: number;
+    slug: string;
     title: string;
     description: string;
     shortDescription: string | null;
@@ -38,8 +39,8 @@ export async function fetchEvents(range?: { after: string; strictlyBefore: strin
     });
 }
 
-export async function fetchEvent(id: number): Promise<Event> {
-    return client.request<Event>(`/events/${id}`, {
+export async function fetchEvent(slug: string): Promise<Event> {
+    return client.request<Event>(`/events/${encodeURIComponent(slug)}`, {
         headers: { Accept: 'application/json' },
     });
 }

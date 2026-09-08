@@ -22,7 +22,7 @@ const eventTime = computed(() => formatEventTime(props.event));
 const dateLabel = computed(() => formatEventDateRange(props.event));
 const isGreyed = computed(() => props.event.visibility === 'greyed_out');
 const detailTo = computed(() =>
-    isGreyed.value ? undefined : { name: 'agenda-detail', params: { id: props.event.id } },
+    isGreyed.value ? undefined : { name: 'agenda-detail', params: { slug: props.event.slug } },
 );
 
 const chipColor = computed(() => {

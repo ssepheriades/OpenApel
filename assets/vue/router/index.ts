@@ -20,7 +20,7 @@ const router = createRouter({
             component: () => import('@/pages/AgendaPage.vue'),
         },
         {
-            path: '/agenda/:id',
+            path: '/agenda/:slug',
             name: 'agenda-detail',
             component: () => import('@/pages/EventDetailPage.vue'),
         },
@@ -30,7 +30,7 @@ const router = createRouter({
             component: () => import('@/pages/NewsPage.vue'),
         },
         {
-            path: '/actualites/:id',
+            path: '/actualites/:slug',
             name: 'news-detail',
             component: () => import('@/pages/NewsDetailPage.vue'),
         },

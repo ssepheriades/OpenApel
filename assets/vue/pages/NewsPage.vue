@@ -84,7 +84,7 @@ onMounted(async () => {
                 </div>
 
                 <div v-else class="news-grid">
-                    <PostCard v-for="post in filteredPosts" :key="post.id" :post="post" />
+                    <PostCard v-for="post in filteredPosts" :key="post.slug" :post="post" />
                 </div>
             </div>
         </v-container>

@@ -29,4 +29,20 @@ class EventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function existsSlug(string $slug, ?int $excludeId = null): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->andWhere('e.slug = :slug')
+            ->setParameter('slug', $slug);
+
+        if (null !== $excludeId) {
+            $queryBuilder
+                ->andWhere('e.id != :excludeId')
+                ->setParameter('excludeId', $excludeId);
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult() > 0;
+    }
 }

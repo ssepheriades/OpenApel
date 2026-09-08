@@ -6,23 +6,28 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Enum\MediaMapping;
 use App\Enum\PostState;
 use App\Repository\PostRepository;
+use App\Service\ContentSlugger;
 use App\Validator\Constraints\ExclusiveGradeOrClass;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_post_slug', columns: ['slug'])]
 #[ORM\Index(name: 'idx_post_theme', columns: ['theme_id'])]
 #[ORM\Index(name: 'idx_post_state', columns: ['state'])]
+#[UniqueEntity(fields: ['slug'], message: 'Cette adresse est déjà utilisée.')]
 #[ExclusiveGradeOrClass]
 #[Vich\Uploadable]
 #[ApiResource(
@@ -43,6 +48,7 @@ class Post implements AudienceTargetedInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[ApiProperty(identifier: false)]
     #[Groups(['post:read'])]
     private ?int $id = null;
 
@@ -51,6 +57,14 @@ class Post implements AudienceTargetedInterface
     #[Assert\Length(max: 255)]
     #[Groups(['post:read'])]
     private ?string $title = null;
+
+    // Blank is allowed in the form: ContentSlugListener fills it on persist.
+    #[ORM\Column(length: 80)]
+    #[ApiProperty(identifier: true)]
+    #[Assert\Length(min: ContentSlugger::MIN_LENGTH, max: ContentSlugger::MAX_LENGTH)]
+    #[Assert\Regex(pattern: ContentSlugger::PATTERN, message: 'Utilisez uniquement des lettres minuscules, des chiffres et des tirets.')]
+    #[Groups(['post:read'])]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
@@ -106,6 +120,19 @@ class Post implements AudienceTargetedInterface
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $normalized = null === $slug ? null : trim($slug);
+        $this->slug = '' === $normalized ? null : $normalized;
 
         return $this;
     }

@@ -58,6 +58,10 @@ final class EventCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield TextField::new('title');
+        yield TextField::new('slug', 'Adresse publique')
+            ->setRequired(false)
+            ->setFormTypeOption('empty_data', '')
+            ->setHelp('Laissé vide, le champ est généré depuis le titre et l’année. Évitez de le changer une fois publié.');
         yield MarkdownEditorField::new('description', 'Description');
         yield TextField::new('shortDescription');
         yield BooleanField::new('isAllDay', 'Journée entière')

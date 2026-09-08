@@ -8,6 +8,7 @@ import MarkdownContent from '@/components/ui/MarkdownContent.vue';
 import AudienceChips from '@/components/ui/AudienceChips.vue';
 import PageHero from '@/components/ui/PageHero.vue';
 import ThemeChip from '@/components/ui/ThemeChip.vue';
+import { isContentSlug } from '@/utils/contentSlug';
 import { formatPostDate } from '@/utils/postDate';
 import { useAppStore } from '@/stores/app';
 
@@ -22,8 +23,8 @@ async function load(): Promise<void> {
     error.value = null;
     post.value = null;
 
-    const id = Number(route.params.id);
-    if (!Number.isInteger(id) || id < 1) {
+    const slug = route.params.slug;
+    if (!isContentSlug(slug)) {
         error.value = 'not-found';
         isLoading.value = false;
 
@@ -31,7 +32,7 @@ async function load(): Promise<void> {
     }
 
     try {
-        post.value = await fetchPost(id);
+        post.value = await fetchPost(slug);
     } catch (cause) {
         error.value = cause instanceof ApiError && cause.status === 404 ? 'not-found' : 'load';
     } finally {
@@ -39,7 +40,7 @@ async function load(): Promise<void> {
     }
 }
 
-watch(() => route.params.id, load, { immediate: true });
+watch(() => route.params.slug, load, { immediate: true });
 </script>
 
 <template>

@@ -25,4 +25,20 @@ class PostRepository extends ServiceEntityRepository
     {
         return $this->findBy(['coverImageFilename' => $filename]);
     }
+
+    public function existsSlug(string $slug, ?int $excludeId = null): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.slug = :slug')
+            ->setParameter('slug', $slug);
+
+        if (null !== $excludeId) {
+            $queryBuilder
+                ->andWhere('p.id != :excludeId')
+                ->setParameter('excludeId', $excludeId);
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult() > 0;
+    }
 }

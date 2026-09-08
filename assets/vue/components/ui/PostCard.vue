@@ -16,7 +16,7 @@ const excerpt = computed(() => excerptFromMarkdown(props.post.content));
 <template>
     <v-card
         class="post-card"
-        :to="{ name: 'news-detail', params: { id: post.id } }"
+        :to="{ name: 'news-detail', params: { slug: post.slug } }"
         elevation="0"
     >
         <v-img

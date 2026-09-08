@@ -91,11 +91,11 @@ export function isUpcomingEvent(
     return new Date(event.startsAt) >= now;
 }
 
-export function findNextEventId(
-    events: Array<{ id: number; startsAt: string; endsAt?: string | null; isAllDay?: boolean | null }>,
+export function findNextEventSlug(
+    events: Array<{ slug: string; startsAt: string; endsAt?: string | null; isAllDay?: boolean | null }>,
     now: Date = new Date(),
-): number | null {
-    return events.find((event) => isUpcomingEvent(event, now))?.id ?? null;
+): string | null {
+    return events.find((event) => isUpcomingEvent(event, now))?.slug ?? null;
 }
 
 function monthDayValue(monthDay: MonthDay): number {

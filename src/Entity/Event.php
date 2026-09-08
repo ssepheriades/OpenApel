@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -16,9 +17,11 @@ use App\Enum\EventType;
 use App\Enum\EventVisibility;
 use App\Enum\MediaMapping;
 use App\Repository\EventRepository;
+use App\Service\ContentSlugger;
 use App\Validator\Constraints\ExclusiveGradeOrClass;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,7 +29,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_event_slug', columns: ['slug'])]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['slug'], message: 'Cette adresse est déjà utilisée.')]
 #[ExclusiveGradeOrClass]
 #[ApiResource(
     operations: [
@@ -48,12 +53,21 @@ class Event implements AudienceTargetedInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[ApiProperty(identifier: false)]
     #[Groups(['event:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['event:read'])]
     private ?string $title = null;
+
+    // Blank is allowed in the form: ContentSlugListener fills it on persist.
+    #[ORM\Column(length: 80)]
+    #[ApiProperty(identifier: true)]
+    #[Assert\Length(min: ContentSlugger::MIN_LENGTH, max: ContentSlugger::MAX_LENGTH)]
+    #[Assert\Regex(pattern: ContentSlugger::PATTERN, message: 'Utilisez uniquement des lettres minuscules, des chiffres et des tirets.')]
+    #[Groups(['event:read'])]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['event:read'])]
@@ -138,6 +152,19 @@ class Event implements AudienceTargetedInterface
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $normalized = null === $slug ? null : trim($slug);
+        $this->slug = '' === $normalized ? null : $normalized;
 
         return $this;
     }
