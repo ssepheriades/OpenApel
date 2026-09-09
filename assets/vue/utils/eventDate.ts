@@ -13,6 +13,12 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
     timeZone: APP_TIMEZONE,
 });
 
+const compactDateFormatter = new Intl.DateTimeFormat('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: APP_TIMEZONE,
+});
+
 const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
     hour: '2-digit',
     minute: '2-digit',
@@ -36,7 +42,7 @@ export function formatEventDateRange(event: EventSchedule): string {
         return formatEventDate(event.startsAt);
     }
 
-    return `${formatEventDate(event.startsAt)} – ${formatEventDate(event.endsAt)}`;
+    return `${formatCompactDate(event.startsAt)} – ${formatCompactDate(event.endsAt)}`;
 }
 
 export function formatEventTime(event: EventSchedule): string | null {
@@ -58,13 +64,17 @@ export function formatEventTime(event: EventSchedule): string | null {
         return `${start} – ${end}`;
     }
 
-    return `${start} – ${formatEventDate(event.endsAt)} ${end}`;
+    return `${start} – ${formatCompactDate(event.endsAt)} ${end}`;
 }
 
 export function isAllDayCurrent(event: EventSchedule, now: Date = new Date()): boolean {
     const lastDay = event.endsAt ?? event.startsAt;
 
     return calendarDayFormatter.format(now) <= calendarDayFormatter.format(new Date(lastDay));
+}
+
+function formatCompactDate(iso: string): string {
+    return compactDateFormatter.format(new Date(iso));
 }
 
 function formatTime(iso: string): string {

@@ -1,9 +1,31 @@
 import type { Grade, SchoolClass } from './audience';
 import client from './client';
 
-export type EventType = 'public_holiday' | 'vacation' | 'party' | 'public_meeting' | 'school_event';
+export type EventType =
+    | 'public_holiday'
+    | 'vacation'
+    | 'pedagogical_day'
+    | 'party'
+    | 'public_meeting'
+    | 'school_event';
 export type EventState = 'open' | 'full' | 'cancelled';
 export type EventVisibility = 'visible' | 'hidden' | 'greyed_out';
+
+export const SCHOOL_CLOSURE_TYPES: readonly EventType[] = [
+    'vacation',
+    'pedagogical_day',
+    'public_holiday',
+];
+
+const AGENDA_DETAIL_DISABLED_TYPES: readonly EventType[] = ['vacation', 'public_holiday'];
+
+export function isSchoolClosureEvent(type: EventType): boolean {
+    return SCHOOL_CLOSURE_TYPES.includes(type);
+}
+
+export function hasAgendaDetail(type: EventType): boolean {
+    return !AGENDA_DETAIL_DISABLED_TYPES.includes(type);
+}
 
 export interface Event {
     id: number;

@@ -62,6 +62,7 @@ describe('formatEventTime', () => {
 
         expect(label).toContain('–');
         expect(label?.toLowerCase()).toContain('mai');
+        expect(label?.toLowerCase()).not.toMatch(/lun\.|mar\.|mer\.|jeu\.|ven\.|sam\.|dim\./u);
     });
 });
 
@@ -75,10 +76,11 @@ describe('formatEventDateRange', () => {
 
         expect(label.toLowerCase()).toContain('oct');
         expect(label).toMatch(/12/u);
+        expect(label.toLowerCase()).toMatch(/lun\.|mar\.|mer\.|jeu\.|ven\.|sam\.|dim\./u);
         expect(label).not.toContain('–');
     });
 
-    it('joins inclusive civil days for a multi-day all-day event', () => {
+    it('joins inclusive civil days for a multi-day all-day event without weekdays', () => {
         const label = formatEventDateRange({
             startsAt: '2026-10-12T00:00:00+02:00',
             endsAt: '2026-10-16T00:00:00+02:00',
@@ -88,6 +90,7 @@ describe('formatEventDateRange', () => {
         expect(label).toContain('–');
         expect(label).toMatch(/12/u);
         expect(label).toMatch(/16/u);
+        expect(label.toLowerCase()).not.toMatch(/lun\.|mar\.|mer\.|jeu\.|ven\.|sam\.|dim\./u);
     });
 });
 

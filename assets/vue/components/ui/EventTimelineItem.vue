@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useDisplay } from 'vuetify';
-import type { Event } from '@/api/events';
+import { hasAgendaDetail, isSchoolClosureEvent, type Event } from '@/api/events';
 import AudienceChips from '@/components/ui/AudienceChips.vue';
 import { formatEventDateRange, formatEventTime } from '@/utils/eventDate';
 
@@ -20,10 +20,15 @@ const props = withDefaults(
 const { smAndDown } = useDisplay();
 const eventTime = computed(() => formatEventTime(props.event));
 const dateLabel = computed(() => formatEventDateRange(props.event));
+const isClosure = computed(() => isSchoolClosureEvent(props.event.type));
 const isGreyed = computed(() => props.event.visibility === 'greyed_out');
-const detailTo = computed(() =>
-    isGreyed.value ? undefined : { name: 'agenda-detail', params: { slug: props.event.slug } },
-);
+const detailTo = computed(() => {
+    if (isGreyed.value || !hasAgendaDetail(props.event.type)) {
+        return undefined;
+    }
+
+    return { name: 'agenda-detail', params: { slug: props.event.slug } };
+});
 
 const chipColor = computed(() => {
     if (props.isPast || isGreyed.value) {
@@ -50,27 +55,39 @@ const chipColor = computed(() => {
         :class="{
             'event-timeline-item--past': isPast,
             'event-timeline-item--greyed': isGreyed,
+            'event-timeline-item--closure': isClosure,
         }"
     >
         <template #opposite>
             <div class="event-when">
                 <span class="event-when__date">{{ dateLabel }}</span>
-                <span v-if="eventTime" class="event-when__time">{{ eventTime }}</span>
-                <span v-else-if="event.isAllDay" class="event-when__time">Journée entière</span>
+                <template v-if="!isClosure">
+                    <span v-if="eventTime" class="event-when__time">{{ eventTime }}</span>
+                    <span v-else-if="event.isAllDay" class="event-when__time">Journée entière</span>
+                </template>
             </div>
         </template>
 
         <v-card
             :id="anchorId"
             class="event-card"
-            :class="{ 'event-card--link': !!detailTo }"
+            :class="{
+                'event-card--link': !!detailTo,
+                'event-card--closure': isClosure,
+            }"
             v-bind="detailTo ? { to: detailTo } : {}"
             elevation="0"
         >
             <div class="event-card__row">
                 <div class="event-card__body">
                     <v-card-title class="event-card__title">{{ event.title }}</v-card-title>
-                    <v-card-text>
+                    <v-card-text v-if="isClosure && smAndDown">
+                        <p class="event-meta">
+                            <FontAwesomeIcon :icon="['fas', 'calendar-days']" class="event-meta__icon" />
+                            <span>{{ dateLabel }}</span>
+                        </p>
+                    </v-card-text>
+                    <v-card-text v-else-if="!isClosure">
                         <p v-if="event.shortDescription">{{ event.shortDescription }}</p>
                         <p v-if="smAndDown" class="event-meta">
                             <FontAwesomeIcon :icon="['fas', 'calendar-days']" class="event-meta__icon" />
@@ -123,7 +140,7 @@ const chipColor = computed(() => {
                     </v-card-text>
                 </div>
                 <v-img
-                    v-if="event.flyerImageUrl"
+                    v-if="!isClosure && event.flyerImageUrl"
                     :src="event.flyerImageUrl"
                     alt=""
                     class="event-card__flyer"
@@ -177,6 +194,20 @@ const chipColor = computed(() => {
 
 .event-card__title {
     white-space: normal;
+}
+
+.event-card--closure {
+    background-color: rgb(var(--v-theme-surface));
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(var(--v-theme-secondary), 0.14) 0 10px,
+        transparent 10px 20px
+    );
+    border-style: dashed;
+}
+
+.event-card--closure .event-card__title {
+    padding-bottom: 0.75rem;
 }
 
 .event-when {
