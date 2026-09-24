@@ -28,6 +28,7 @@ final class TeamMemberProvider implements ProviderInterface
                 firstName: $user->getFirstName() ?? '',
                 lastName: $user->getLastName() ?? '',
                 position: $user->getPosition(),
+                quote: $user->getQuote(),
                 photoUrl: $this->resolvePhotoUrl($user),
             ),
             $this->userRepository->findActiveMembers(),

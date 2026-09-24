@@ -35,6 +35,7 @@ defineProps<{ member: TeamMember }>();
                 {{ member.firstName }}
                 <span class="card-lastname">{{ member.lastName }}</span>
             </h3>
+            <p v-if="member.quote" class="card-quote">« {{ member.quote }} »</p>
         </div>
     </v-card>
 </template>
@@ -119,9 +120,11 @@ defineProps<{ member: TeamMember }>();
 .card-content {
     padding: 24px 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
+    gap: 12px;
     min-height: 100px;
     background: white;
 }
@@ -143,6 +146,19 @@ defineProps<{ member: TeamMember }>();
     margin-top: 2px;
 }
 
+.card-quote {
+    margin: 0;
+    font-size: 0.875rem;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.4;
+    color: rgb(var(--v-theme-secondary));
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 @media (max-width: 600px) {
     .card-image-container {
         height: 200px;
@@ -155,6 +171,10 @@ defineProps<{ member: TeamMember }>();
 
     .card-name {
         font-size: 1.1rem;
+    }
+
+    .card-quote {
+        font-size: 0.8rem;
     }
 }
 </style>

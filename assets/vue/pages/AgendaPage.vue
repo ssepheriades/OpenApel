@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useDisplay } from 'vuetify';
 import { fetchEvents, type Event } from '@/api/events';
+import CalendarSubscribe from '@/components/ui/CalendarSubscribe.vue';
 import EventTimelineItem from '@/components/ui/EventTimelineItem.vue';
 import PageHero from '@/components/ui/PageHero.vue';
 import { useAppStore } from '@/stores/app';
@@ -75,6 +76,10 @@ onMounted(async () => {
             :title="page.title"
             :subtitle="page.subtitle ?? undefined"
         />
+
+        <v-container class="pt-8 pb-0">
+            <CalendarSubscribe />
+        </v-container>
 
         <v-container class="py-12">
             <!-- Loading State -->

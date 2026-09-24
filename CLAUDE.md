@@ -80,6 +80,7 @@ asso-cms/
 - `/admin/*` → EasyAdmin (Twig, staff authentifié)
 - `/api/*` → API Platform (JSON, public en lecture)
 - `/media/{mapping}/{filename}` → `MediaController` (fichiers hors `public/`)
+- `/calendar.ics` et `/calendar/events/{slug}.ics` → `EventIcsController` (abonnement et export iCal)
 - `/*` → SPA Vue 3 (catch-all, sert `index.html`)
 
 ## Conventions de code

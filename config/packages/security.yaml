@@ -35,6 +35,10 @@ security:
             pattern: ^/api
             stateless: true
 
+        calendar:
+            pattern: ^/calendar
+            stateless: true
+
         main:
             lazy: true
             context: main

@@ -24,4 +24,27 @@ enum EventType: string
             self::SchoolEvent => 'Événement scolaire',
         };
     }
+
+    /**
+     * Types parents can subscribe to or add to a personal calendar.
+     * Vacations and public holidays are omitted to avoid duplicates with national calendars.
+     */
+    public function isCalendarExportable(): bool
+    {
+        return match ($this) {
+            self::PublicHoliday, self::Vacation => false,
+            self::PedagogicalDay, self::Party, self::PublicMeeting, self::SchoolEvent => true,
+        };
+    }
+
+    /**
+     * @return list<self>
+     */
+    public static function calendarExportableCases(): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            static fn (self $type): bool => $type->isCalendarExportable(),
+        ));
+    }
 }

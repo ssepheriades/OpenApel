@@ -30,4 +30,23 @@ final class EventTypeTest extends TestCase
     {
         self::assertSame('Journée pédagogique', EventType::PedagogicalDay->label());
     }
+
+    public function testCalendarExportableTypesExcludeNationalClosures(): void
+    {
+        self::assertFalse(EventType::PublicHoliday->isCalendarExportable());
+        self::assertFalse(EventType::Vacation->isCalendarExportable());
+        self::assertTrue(EventType::PedagogicalDay->isCalendarExportable());
+        self::assertTrue(EventType::Party->isCalendarExportable());
+        self::assertTrue(EventType::PublicMeeting->isCalendarExportable());
+        self::assertTrue(EventType::SchoolEvent->isCalendarExportable());
+        self::assertSame(
+            [
+                EventType::PedagogicalDay,
+                EventType::Party,
+                EventType::PublicMeeting,
+                EventType::SchoolEvent,
+            ],
+            EventType::calendarExportableCases(),
+        );
+    }
 }

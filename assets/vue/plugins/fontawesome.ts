@@ -1,14 +1,17 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import {
+    faArrowUpRightFromSquare,
     faBan,
     faBars,
     faCalendarDays,
+    faCalendarPlus,
     faChevronLeft,
     faChevronRight,
     faCircleExclamation,
     faCircleQuestion,
     faClock,
+    faCopy,
     faDownload,
     faEnvelope,
     faFile,
@@ -27,14 +30,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
+    faArrowUpRightFromSquare,
     faBan,
     faBars,
     faCalendarDays,
+    faCalendarPlus,
     faChevronLeft,
     faChevronRight,
     faCircleExclamation,
     faCircleQuestion,
     faClock,
+    faCopy,
     faDownload,
     faEnvelope,
     faFacebook,

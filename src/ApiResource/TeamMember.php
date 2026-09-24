@@ -32,6 +32,8 @@ final readonly class TeamMember
         #[Groups(['team_member:read'])]
         public ?string $position,
         #[Groups(['team_member:read'])]
+        public ?string $quote,
+        #[Groups(['team_member:read'])]
         public ?string $photoUrl,
     ) {
     }

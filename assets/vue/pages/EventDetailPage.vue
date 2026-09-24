@@ -8,6 +8,7 @@ import AudienceChips from '@/components/ui/AudienceChips.vue';
 import MarkdownContent from '@/components/ui/MarkdownContent.vue';
 import PageHero from '@/components/ui/PageHero.vue';
 import { useAppStore } from '@/stores/app';
+import { eventIcsPath } from '@/utils/calendar';
 import { isContentSlug } from '@/utils/contentSlug';
 import { formatEventDateRange, formatEventTime } from '@/utils/eventDate';
 
@@ -148,17 +149,22 @@ watch(() => route.params.slug, load, { immediate: true });
 
                         <MarkdownContent v-if="event.description" :source="event.description" />
 
-                        <v-btn
-                            v-if="event.ticketingUrl"
-                            :href="event.ticketingUrl"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            color="primary"
-                            class="mt-6"
-                        >
-                            <FontAwesomeIcon :icon="['fas', 'ticket']" class="mr-2" />
-                            Billetterie
-                        </v-btn>
+                        <div class="event-article__actions">
+                            <v-btn :href="eventIcsPath(event.slug)" color="primary" variant="outlined">
+                                <FontAwesomeIcon :icon="['fas', 'calendar-plus']" class="mr-2" />
+                                Ajouter à mon agenda
+                            </v-btn>
+                            <v-btn
+                                v-if="event.ticketingUrl"
+                                :href="event.ticketingUrl"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                color="primary"
+                            >
+                                <FontAwesomeIcon :icon="['fas', 'ticket']" class="mr-2" />
+                                Billetterie
+                            </v-btn>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -260,6 +266,13 @@ watch(() => route.params.slug, load, { immediate: true });
     margin-top: 0.2rem;
     width: 0.85rem;
     color: rgb(var(--v-theme-primary));
+}
+
+.event-article__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
 }
 
 @media (max-width: 600px) {

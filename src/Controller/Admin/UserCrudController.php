@@ -71,6 +71,11 @@ final class UserCrudController extends AbstractCrudController
         yield TextField::new('lastName');
         yield TelephoneField::new('phone');
         yield TextField::new('position')->setHelp('Ex: Trésorier, Secrétaire, Trésorier Adjoint...');
+        yield TextareaField::new('quote', 'Citation')
+            ->setHelp('Texte court affiché en bas de la carte sur la page Équipe (255 caractères maximum).')
+            ->setNumOfRows(3)
+            ->setMaxLength(255)
+            ->setFormTypeOption('attr', ['maxlength' => 255]);
         yield IntegerField::new('weight')->setHelp('Plus le nombre est élevé, plus le membre apparaît en haut de la page Équipe.');
         yield TextField::new('shortBio')->setMaxLength(80);
         yield TextareaField::new('bio');

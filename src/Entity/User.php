@@ -67,6 +67,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 255)]
     private ?string $position = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $quote = null;
+
     #[ORM\Column]
     private int $weight = 0;
 
@@ -253,6 +257,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPosition(?string $position): self
     {
         $this->position = self::normalizeOptionalString($position);
+
+        return $this;
+    }
+
+    public function getQuote(): ?string
+    {
+        return $this->quote;
+    }
+
+    public function setQuote(?string $quote): self
+    {
+        $this->quote = self::normalizeOptionalString($quote);
 
         return $this;
     }
