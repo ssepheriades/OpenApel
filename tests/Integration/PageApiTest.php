@@ -24,11 +24,9 @@ final class PageApiTest extends WebTestCase
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
-        static::bootKernel();
-        $this->client = new KernelBrowser(static::$kernel);
+        $this->client = static::createClient();
 
-        $container = static::$kernel->getContainer();
-        $this->entityManager = $container->get('doctrine')->getManager();
+        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
 
         $metadata = [
             $this->entityManager->getClassMetadata(SiteSettings::class),
