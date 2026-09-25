@@ -35,14 +35,78 @@ const sampleSettings: SiteSettings = {
 };
 
 const samplePages: SitePage[] = [
-    { slug: 'home', kind: 'section', title: "Bienvenue à l'école", subtitle: null, body: '**Ensemble** pour nos enfants.', visible: true },
-    { slug: 'news', kind: 'section', title: 'Actualités', subtitle: "Les nouvelles de l'association", body: null, visible: true },
-    { slug: 'agenda', kind: 'section', title: 'Agenda', subtitle: 'Les dates', body: null, visible: true },
-    { slug: 'faq', kind: 'section', title: 'FAQ', subtitle: 'Les questions', body: null, visible: true },
-    { slug: 'documents', kind: 'section', title: 'Documents', subtitle: 'Les fichiers', body: null, visible: true },
-    { slug: 'team', kind: 'section', title: 'Le bureau', subtitle: null, body: null, visible: true },
-    { slug: 'contact', kind: 'section', title: 'Contact', subtitle: 'Écrivez-nous', body: null, visible: true },
-    { slug: 'mentions-legales', kind: 'document', title: 'Mentions légales', subtitle: null, body: 'Éditeur.', visible: true },
+    {
+        slug: 'home',
+        kind: 'section',
+        title: "Bienvenue à l'école",
+        subtitle: null,
+        body: '**Ensemble** pour nos enfants.',
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'news',
+        kind: 'section',
+        title: 'Actualités',
+        subtitle: "Les nouvelles de l'association",
+        body: null,
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'agenda',
+        kind: 'section',
+        title: 'Agenda',
+        subtitle: 'Les dates',
+        body: null,
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'faq',
+        kind: 'section',
+        title: 'FAQ',
+        subtitle: 'Les questions',
+        body: null,
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'documents',
+        kind: 'section',
+        title: 'Documents',
+        subtitle: 'Les fichiers',
+        body: null,
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'team',
+        kind: 'section',
+        title: 'Le bureau',
+        subtitle: null,
+        body: null,
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'contact',
+        kind: 'section',
+        title: 'Contact',
+        subtitle: 'Écrivez-nous',
+        body: null,
+        visible: true,
+        coverImageUrl: null,
+    },
+    {
+        slug: 'mentions-legales',
+        kind: 'document',
+        title: 'Mentions légales',
+        subtitle: null,
+        body: 'Éditeur.',
+        visible: true,
+        coverImageUrl: null,
+    },
     {
         slug: 'politique-de-confidentialite',
         kind: 'document',
@@ -50,6 +114,7 @@ const samplePages: SitePage[] = [
         subtitle: null,
         body: 'Données.',
         visible: true,
+        coverImageUrl: null,
     },
 ];
 
@@ -73,6 +138,7 @@ describe('useAppStore', () => {
         expect(store.settings).toBeNull();
         expect(store.pageContent('home').title).toBe(DEFAULT_SITE_NAME);
         expect(store.pageContent('home').body).toBeNull();
+        expect(store.pageContent('home').coverImageUrl).toBeNull();
         expect(store.pageContent('team').title).toBe('Équipe');
         expect(store.pageForRoute('team')?.title).toBe('Équipe');
     });

@@ -18,6 +18,7 @@ final readonly class PageView
         public ?string $subtitle,
         public ?string $body,
         public bool $visible,
+        public ?string $coverImageUrl,
     ) {
     }
 
@@ -30,6 +31,7 @@ final readonly class PageView
             subtitle: $page->getSubtitle(),
             body: $page->getBody(),
             visible: $page->isVisible(),
+            coverImageUrl: $page->getCoverImageUrl(),
         );
     }
 }

@@ -25,7 +25,11 @@ onMounted(async () => {
 
 <template>
     <div class="team-page">
-        <PageHero :title="page.title" :subtitle="page.subtitle ?? undefined" />
+        <PageHero
+            :title="page.title"
+            :subtitle="page.subtitle ?? undefined"
+            :cover-image-url="page.coverImageUrl"
+        />
 
         <!-- Content -->
         <v-container class="py-12">

@@ -8,12 +8,14 @@ use App\Entity\ContentTheme;
 use App\Entity\Document;
 use App\Entity\Event;
 use App\Entity\Grade;
+use App\Entity\Page;
 use App\Entity\Post;
 use App\Entity\SchoolClass;
 use App\Entity\SiteSettings;
 use App\Entity\User;
 use App\Enum\DocumentVisibility;
 use App\Enum\MediaMapping;
+use App\Enum\PageSlug;
 use App\Enum\PostState;
 use App\Enum\UserRole;
 use App\Service\MediaStorage;
@@ -30,6 +32,8 @@ final class MediaControllerTest extends WebTestCase
     private KernelBrowser $client;
     private string $photoPath;
     private string $draftPhotoPath;
+    private string $pagePhotoPath;
+    private string $hiddenPagePhotoPath;
     private string $documentPath;
     private string $brandingSvgPath;
     private string $brandingPngPath;
@@ -55,11 +59,15 @@ final class MediaControllerTest extends WebTestCase
 
         $this->photoPath = $photosDir . '/fixture.txt';
         $this->draftPhotoPath = $photosDir . '/draft.txt';
+        $this->pagePhotoPath = $photosDir . '/page-cover.txt';
+        $this->hiddenPagePhotoPath = $photosDir . '/hidden-page-cover.txt';
         $this->documentPath = $documentsDir . '/secret.txt';
         $this->brandingSvgPath = $brandingDir . '/logo.svg';
         $this->brandingPngPath = $brandingDir . '/logo.png';
         file_put_contents($this->photoPath, 'photo-body');
         file_put_contents($this->draftPhotoPath, 'draft-body');
+        file_put_contents($this->pagePhotoPath, 'page-cover-body');
+        file_put_contents($this->hiddenPagePhotoPath, 'hidden-page-body');
         file_put_contents($this->documentPath, 'secret-body');
         file_put_contents($this->brandingSvgPath, '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
         file_put_contents($this->brandingPngPath, 'png-body');
@@ -67,7 +75,15 @@ final class MediaControllerTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        foreach ([$this->photoPath, $this->draftPhotoPath, $this->documentPath, $this->brandingSvgPath, $this->brandingPngPath] as $path) {
+        foreach ([
+            $this->photoPath,
+            $this->draftPhotoPath,
+            $this->pagePhotoPath,
+            $this->hiddenPagePhotoPath,
+            $this->documentPath,
+            $this->brandingSvgPath,
+            $this->brandingPngPath,
+        ] as $path) {
             if (is_file($path)) {
                 unlink($path);
             }
@@ -126,6 +142,45 @@ final class MediaControllerTest extends WebTestCase
         self::assertSame('draft-body', file_get_contents($response->getFile()->getPathname()));
         self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
         self::assertStringNotContainsString('public', (string) $response->headers->get('Cache-Control'));
+    }
+
+    public function testVisiblePageCoverIsServedPublicly(): void
+    {
+        $this->ensureMediaSchema();
+        $this->persistPageCover('page-cover.txt', visible: true);
+
+        $this->client->request('GET', '/media/photos/page-cover.txt');
+
+        self::assertResponseIsSuccessful();
+        $response = $this->client->getResponse();
+        self::assertInstanceOf(BinaryFileResponse::class, $response);
+        self::assertSame('page-cover-body', file_get_contents($response->getFile()->getPathname()));
+        self::assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+    }
+
+    public function testHiddenPageCoverIsNotFoundAnonymously(): void
+    {
+        $this->ensureMediaSchema();
+        $this->persistPageCover('hidden-page-cover.txt', visible: false);
+
+        $this->client->request('GET', '/media/photos/hidden-page-cover.txt');
+
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testHiddenPageCoverIsServedPrivatelyToAdmin(): void
+    {
+        $this->ensureMediaSchema();
+        $this->persistPageCover('hidden-page-cover.txt', visible: false);
+        $this->loginAsAdmin();
+
+        $this->client->request('GET', '/media/photos/hidden-page-cover.txt');
+
+        self::assertResponseIsSuccessful();
+        $response = $this->client->getResponse();
+        self::assertInstanceOf(BinaryFileResponse::class, $response);
+        self::assertSame('hidden-page-body', file_get_contents($response->getFile()->getPathname()));
+        self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
     }
 
     public function testLegacyBrandingSvgIsServedAsAttachment(): void
@@ -246,6 +301,7 @@ final class MediaControllerTest extends WebTestCase
             $entityManager->getClassMetadata(SchoolClass::class),
             $entityManager->getClassMetadata(Post::class),
             $entityManager->getClassMetadata(Event::class),
+            $entityManager->getClassMetadata(Page::class),
         ];
         $schemaTool = new SchemaTool($entityManager);
 
@@ -260,6 +316,17 @@ final class MediaControllerTest extends WebTestCase
         static::getContainer()->get(SiteSettingsProvider::class)->getEntity();
 
         return $entityManager;
+    }
+
+    private function persistPageCover(string $filename, bool $visible): void
+    {
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $page = Page::fromSlug(PageSlug::News)
+            ->setVisible($visible)
+            ->setCoverImageFilename($filename);
+
+        $entityManager->persist($page);
+        $entityManager->flush();
     }
 
     private function persistDocument(string $filename, DocumentVisibility $visibility): void

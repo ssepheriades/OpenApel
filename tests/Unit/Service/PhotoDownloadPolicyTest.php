@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\Entity\Event;
+use App\Entity\Page;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Enum\EventVisibility;
 use App\Enum\MediaDownloadAccess;
+use App\Enum\PageSlug;
 use App\Enum\PostState;
 use App\Enum\UserRole;
 use App\Repository\EventRepository;
+use App\Repository\PageRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Service\PhotoDownloadPolicy;
@@ -91,21 +94,43 @@ final class PhotoDownloadPolicyTest extends TestCase
         self::assertSame(MediaDownloadAccess::Public, $policy->access('shared.webp'));
     }
 
+    public function testVisiblePageCoverIsPublic(): void
+    {
+        $policy = $this->policy(pages: [$this->page(visible: true)], filename: 'page.webp');
+
+        self::assertSame(MediaDownloadAccess::Public, $policy->access('page.webp'));
+    }
+
+    public function testHiddenPageCoverIsStaffOnly(): void
+    {
+        $policy = $this->policy(pages: [$this->page(visible: false)], filename: 'hidden-page.webp');
+
+        self::assertSame(MediaDownloadAccess::Staff, $policy->access('hidden-page.webp'));
+    }
+
     /**
      * @param Post[]  $posts
      * @param Event[] $events
      * @param User[]  $users
+     * @param Page[]  $pages
      */
-    private function policy(array $posts = [], array $events = [], array $users = [], string $filename = 'missing.webp'): PhotoDownloadPolicy
-    {
+    private function policy(
+        array $posts = [],
+        array $events = [],
+        array $users = [],
+        array $pages = [],
+        string $filename = 'missing.webp',
+    ): PhotoDownloadPolicy {
         $postRepository = $this->createMock(PostRepository::class);
         $eventRepository = $this->createMock(EventRepository::class);
         $userRepository = $this->createMock(UserRepository::class);
+        $pageRepository = $this->createMock(PageRepository::class);
         $postRepository->method('findByCoverImageFilename')->with($filename)->willReturn($posts);
         $eventRepository->method('findByImageFilename')->with($filename)->willReturn($events);
         $userRepository->method('findByPhotoFilename')->with($filename)->willReturn($users);
+        $pageRepository->method('findByCoverImageFilename')->with($filename)->willReturn($pages);
 
-        return new PhotoDownloadPolicy($postRepository, $eventRepository, $userRepository);
+        return new PhotoDownloadPolicy($postRepository, $eventRepository, $userRepository, $pageRepository);
     }
 
     private function post(PostState $state): Post
@@ -125,5 +150,10 @@ final class PhotoDownloadPolicyTest extends TestCase
         return (new User())
             ->setRoles($roles)
             ->setIsActive($active);
+    }
+
+    private function page(bool $visible): Page
+    {
+        return Page::fromSlug(PageSlug::News)->setVisible($visible);
     }
 }

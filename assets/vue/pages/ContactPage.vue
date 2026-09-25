@@ -11,6 +11,7 @@ const page = useAppStore().pageContent('contact');
         <PageHero
             :title="page.title"
             :subtitle="page.subtitle ?? undefined"
+            :cover-image-url="page.coverImageUrl"
         />
 
         <v-container class="py-12">

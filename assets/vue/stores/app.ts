@@ -90,6 +90,7 @@ export const useAppStore = defineStore('app', () => {
                 subtitle: null,
                 body: loaded?.body ?? null,
                 visible,
+                coverImageUrl: loaded?.coverImageUrl ?? defaults.coverImageUrl,
             };
         }
 
@@ -100,6 +101,7 @@ export const useAppStore = defineStore('app', () => {
             subtitle: loaded?.subtitle ?? defaults.subtitle,
             body: loaded?.body ?? defaults.body,
             visible,
+            coverImageUrl: loaded?.coverImageUrl ?? defaults.coverImageUrl,
         };
     }
 

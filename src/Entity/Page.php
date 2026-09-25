@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\MediaMapping;
 use App\Enum\PageKind;
 use App\Enum\PageSlug;
 use App\Repository\PageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * One row per locked catalogue slug. Content is edited in EasyAdmin; slugs are not created by staff.
@@ -19,6 +22,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Table(name: 'page')]
 #[ORM\UniqueConstraint(name: 'uniq_page_slug', columns: ['slug'])]
 #[ORM\HasLifecycleCallbacks]
+#[Vich\Uploadable]
 class Page
 {
     #[ORM\Id]
@@ -48,6 +52,13 @@ class Page
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverImageFilename = null;
+
+    #[Vich\UploadableField(mapping: 'photos', fileNameProperty: 'coverImageFilename')]
+    #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Formats acceptés : JPEG, PNG, WebP.')]
+    private ?File $coverImageFile = null;
 
     public static function fromSlug(PageSlug $slug): self
     {
@@ -147,6 +158,36 @@ class Page
         return $this->updatedAt;
     }
 
+    public function getCoverImageFilename(): ?string
+    {
+        return $this->coverImageFilename;
+    }
+
+    public function setCoverImageFilename(?string $coverImageFilename): self
+    {
+        $this->coverImageFilename = $coverImageFilename;
+
+        return $this;
+    }
+
+    public function getCoverImageFile(): ?File
+    {
+        return $this->coverImageFile;
+    }
+
+    public function setCoverImageFile(?File $coverImageFile): self
+    {
+        $this->coverImageFile = $coverImageFile;
+        $this->touchOnUpload($coverImageFile);
+
+        return $this;
+    }
+
+    public function getCoverImageUrl(): ?string
+    {
+        return MediaMapping::Photos->url($this->coverImageFilename);
+    }
+
     #[Assert\Callback]
     public function validateRequiredBody(ExecutionContextInterface $context): void
     {
@@ -171,6 +212,17 @@ class Page
     public function __toString(): string
     {
         return $this->title;
+    }
+
+    /**
+     * Vich only moves the file when Doctrine detects a change on the entity,
+     * so a fresh upload must dirty a mapped column.
+     */
+    private function touchOnUpload(?File $file): void
+    {
+        if (null !== $file) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     private static function normalizeOptionalString(?string $value): ?string

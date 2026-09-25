@@ -19,7 +19,7 @@ const hasBody = computed(() => Boolean(page.value.body?.trim()));
 
 <template>
     <div class="document-page">
-        <PageHero :title="page.title" />
+        <PageHero :title="page.title" :cover-image-url="page.coverImageUrl" />
 
         <v-container class="py-12">
             <article v-if="hasBody" class="document-letter">
