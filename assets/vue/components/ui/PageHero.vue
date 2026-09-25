@@ -2,11 +2,17 @@
 defineProps<{
     title: string;
     subtitle?: string;
+    coverImageUrl?: string | null;
 }>();
 </script>
 
 <template>
-    <div class="hero-header">
+    <div
+        class="hero-header"
+        :class="{ 'hero-header--cover': Boolean(coverImageUrl) }"
+        :style="coverImageUrl ? { backgroundImage: `url(${coverImageUrl})` } : undefined"
+    >
+        <div v-if="coverImageUrl" class="hero-overlay" aria-hidden="true"></div>
         <v-container>
             <div class="hero-content">
                 <h1 class="hero-title">{{ title }}</h1>
@@ -30,7 +36,14 @@ defineProps<{
     overflow: hidden;
 }
 
-.hero-header::before {
+.hero-header--cover {
+    background-color: rgb(var(--v-theme-primary));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-header:not(.hero-header--cover)::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -42,7 +55,7 @@ defineProps<{
     opacity: 0.5;
 }
 
-.hero-header::after {
+.hero-header:not(.hero-header--cover)::after {
     content: '';
     position: absolute;
     bottom: -30%;
@@ -52,6 +65,12 @@ defineProps<{
     background: rgba(255, 255, 255, 0.03);
     border-radius: 50%;
     opacity: 0.5;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.55) 100%);
 }
 
 .hero-content {
@@ -66,6 +85,11 @@ defineProps<{
     letter-spacing: -1px;
     margin-bottom: 16px;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hero-header--cover .hero-title,
+.hero-header--cover .hero-subtitle {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 }
 
 .hero-subtitle {

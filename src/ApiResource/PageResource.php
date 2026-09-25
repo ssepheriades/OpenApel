@@ -45,6 +45,8 @@ final readonly class PageResource
         public ?string $body,
         #[Groups(['page:read'])]
         public bool $visible,
+        #[Groups(['page:read'])]
+        public ?string $coverImageUrl,
     ) {
     }
 
@@ -57,6 +59,7 @@ final readonly class PageResource
             subtitle: $view->subtitle,
             body: $view->visible ? $view->body : null,
             visible: $view->visible,
+            coverImageUrl: $view->coverImageUrl,
         );
     }
 }

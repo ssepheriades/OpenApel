@@ -22,6 +22,14 @@ class PageRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Page[]
+     */
+    public function findByCoverImageFilename(string $filename): array
+    {
+        return $this->findBy(['coverImageFilename' => $filename]);
+    }
+
+    /**
      * Inserts any catalogue slug missing from the table (tests, empty schemas).
      *
      * @return list<Page>

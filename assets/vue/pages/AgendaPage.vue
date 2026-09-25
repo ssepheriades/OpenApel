@@ -75,6 +75,7 @@ onMounted(async () => {
         <PageHero
             :title="page.title"
             :subtitle="page.subtitle ?? undefined"
+            :cover-image-url="page.coverImageUrl"
         />
 
         <v-container class="pt-8 pb-0">

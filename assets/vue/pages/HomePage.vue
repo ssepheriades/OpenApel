@@ -7,12 +7,21 @@ import { useAppStore } from '@/stores/app';
 const appStore = useAppStore();
 const home = computed(() => appStore.pageContent('home'));
 const hasIntro = computed(() => Boolean(home.value.body));
+const coverImageUrl = computed(() => home.value.coverImageUrl);
 </script>
 
 <template>
     <div class="home-page">
-        <header class="home-hero" :class="{ 'home-hero--standalone': !hasIntro }">
-            <div class="home-hero__wash" aria-hidden="true"></div>
+        <header
+            class="home-hero"
+            :class="{
+                'home-hero--standalone': !hasIntro,
+                'home-hero--cover': Boolean(coverImageUrl),
+            }"
+            :style="coverImageUrl ? { backgroundImage: `url(${coverImageUrl})` } : undefined"
+        >
+            <div v-if="!coverImageUrl" class="home-hero__wash" aria-hidden="true"></div>
+            <div v-else class="home-hero__overlay" aria-hidden="true"></div>
             <v-container class="home-hero__inner">
                 <div class="home-hero__content">
                     <p v-if="appStore.baseline" class="home-kicker">{{ appStore.baseline }}</p>
@@ -53,6 +62,13 @@ const hasIntro = computed(() => Boolean(home.value.body));
     padding-bottom: 5.5rem;
 }
 
+.home-hero--cover {
+    background-color: rgb(var(--v-theme-primary));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .home-hero__wash {
     position: absolute;
     inset: 0;
@@ -83,6 +99,12 @@ const hasIntro = computed(() => Boolean(home.value.body));
     background: rgba(255, 255, 255, 0.05);
 }
 
+.home-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
 .home-hero__inner {
     position: relative;
     z-index: 1;
@@ -102,6 +124,11 @@ const hasIntro = computed(() => Boolean(home.value.body));
     color: rgb(var(--v-theme-secondary));
 }
 
+.home-hero--cover .home-kicker {
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+
 .home-title {
     margin: 0;
     font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
@@ -110,6 +137,10 @@ const hasIntro = computed(() => Boolean(home.value.body));
     line-height: 1.12;
     letter-spacing: -0.02em;
     text-wrap: balance;
+}
+
+.home-hero--cover .home-title {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 }
 
 .home-rule {

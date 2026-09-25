@@ -45,7 +45,7 @@ watch(() => route.params.slug, load, { immediate: true });
 
 <template>
     <div class="news-detail-page">
-        <PageHero :title="page.title" />
+        <PageHero :title="page.title" :cover-image-url="page.coverImageUrl" />
 
         <v-container class="py-12">
             <div class="news-detail">

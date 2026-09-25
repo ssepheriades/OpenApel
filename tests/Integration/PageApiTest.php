@@ -77,7 +77,28 @@ final class PageApiTest extends WebTestCase
         self::assertSame('Questions des familles', $faq['title']);
         self::assertSame('Chapô FAQ', $faq['subtitle']);
         self::assertTrue($faq['visible']);
+        self::assertArrayHasKey('coverImageUrl', $faq);
+        self::assertNull($faq['coverImageUrl']);
         self::assertArrayNotHasKey('updatedAt', $faq);
+    }
+
+    public function testPublicApiExposesCoverImageUrl(): void
+    {
+        $repository = static::getContainer()->get(PageRepository::class);
+        $pages = $repository->ensureCatalog();
+        foreach ($pages as $page) {
+            if (PageSlug::Home === $page->getSlug()) {
+                $page->setCoverImageFilename('home-bandeau.webp');
+            }
+        }
+        $this->entityManager->flush();
+        static::getContainer()->get(PageCatalogProvider::class)->invalidate();
+
+        $this->client->request('GET', '/api/pages/home', server: ['HTTP_ACCEPT' => 'application/json']);
+
+        self::assertResponseIsSuccessful();
+        $home = json_decode((string) $this->client->getResponse()->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        self::assertSame('/media/photos/home-bandeau.webp', $home['coverImageUrl']);
     }
 
     public function testHiddenPageIsOmittedFromCollection(): void

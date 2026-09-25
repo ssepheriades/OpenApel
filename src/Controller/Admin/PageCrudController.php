@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\Admin\Field\MarkdownEditorField;
 use App\Entity\Page;
+use App\Enum\MediaMapping;
 use App\Enum\PageKind;
 use App\Enum\PageSlug;
 use App\Repository\PageRepository;
@@ -15,8 +16,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
  * Catalogue CRUD: staff edit copy, they cannot create or delete slots.
@@ -63,6 +67,9 @@ final class PageCrudController extends AbstractCrudController
         yield TextField::new('slugValue', 'Identifiant')->hideOnForm();
         yield TextField::new('kindLabel', 'Type')->hideOnForm();
         yield TextField::new('visibilityLabel', 'Visible')->onlyOnIndex();
+        yield ImageField::new('coverImageFilename', 'Image')
+            ->setBasePath(MediaMapping::Photos->uriPrefix())
+            ->onlyOnIndex();
 
         if (Crud::PAGE_INDEX === $pageName) {
             yield DateTimeField::new('updatedAt', 'Modifiée')->hideOnForm();
@@ -84,6 +91,12 @@ final class PageCrudController extends AbstractCrudController
             yield TextField::new('subtitle', 'Chapô')
                 ->setHelp('Sous-titre affiché sous le titre, en haut de la page.');
         }
+
+        yield Field::new('coverImageFile', 'Image de bandeau')
+            ->setFormType(VichImageType::class)
+            ->setFormTypeOptions(['allow_delete' => true, 'download_uri' => false, 'image_uri' => false])
+            ->setHelp('Optionnelle. JPEG, PNG ou WebP, 5 Mo max. Affichée en haut de la page publique.')
+            ->onlyOnForms();
 
         if (null === $slug || $slug->usesBody()) {
             $help = PageSlug::Home === $slug
