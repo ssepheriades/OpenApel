@@ -1,7 +1,7 @@
-# Optional Compose layout for Coolify (Docker Compose) or local smoke tests.
-# Preferred Coolify mode: Dockerfile build + managed PostgreSQL resource (see docs/coolify-release.md).
+# Reference / smoke-test Compose. Prefer Coolify "Dockerfile" build pack +
+# separate PostgreSQL 18 resource in production (see DEPLOY_COOLIFY.md).
 #
-# Coolify Traefik terminates TLS; do not publish host ports for the app service.
+# Coolify Traefik terminates TLS — do not publish app ports on the host in prod.
 
 services:
   app:
@@ -12,36 +12,44 @@ services:
     environment:
       APP_ENV: prod
       APP_DEBUG: '0'
-      APP_SECRET: ${APP_SECRET}
-      APP_INSTANCE: ${APP_INSTANCE}
+      # Prefer OPENAPEL_* so Compose does not reuse Symfony .env APP_* for local smoke.
+      APP_SECRET: ${OPENAPEL_APP_SECRET:-change_me_local_smoke_only}
+      APP_INSTANCE: ${OPENAPEL_APP_INSTANCE:-smoke}
       UPLOAD_DIR: /app/var/storage
-      DATABASE_URL: ${DATABASE_URL}
-      MAILER_DSN: ${MAILER_DSN:-null://null}
-      DEFAULT_URI: ${DEFAULT_URI}
-      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-REMOTE_ADDR}
-      SERVER_NAME: ':80'
-      VITE_API_URL: /api
+      DATABASE_URL: ${OPENAPEL_DATABASE_URL:-postgresql://openapel:openapel@database:5432/openapel?serverVersion=18&charset=utf8}
+      MAILER_DSN: ${OPENAPEL_MAILER_DSN:-null://null}
+      DEFAULT_URI: ${OPENAPEL_DEFAULT_URI:-http://localhost:8080}
+      TRUSTED_PROXIES: ${OPENAPEL_TRUSTED_PROXIES:-REMOTE_ADDR}
+      SERVER_NAME: ':8080'
     volumes:
       - openapel_uploads:/app/var/storage
+    ports:
+      - '${APP_PUBLISH_PORT:-8080}:8080'
+    depends_on:
+      database:
+        condition: service_healthy
     healthcheck:
-      test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1/health']
+      test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1:8080/health']
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 60s
-    # Coolify injects networks / labels; for local tests with a linked DB:
-    # depends_on: [database]
+      start_period: 90s
 
-  # Example only — prefer Coolify's PostgreSQL service in production.
-  # database:
-  #   image: postgres:17-alpine
-  #   environment:
-  #     POSTGRES_DB: openapel
-  #     POSTGRES_USER: openapel
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #   volumes:
-  #     - openapel_pg:/var/lib/postgresql/data
+  database:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: openapel
+      POSTGRES_USER: openapel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openapel}
+    # PG 18+ official image: mount parent dir (not .../data) — see docker-library/postgres#1259
+    volumes:
+      - openapel_pg:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U openapel -d openapel']
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   openapel_uploads:
-  # openapel_pg:
+  openapel_pg:

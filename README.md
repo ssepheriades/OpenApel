@@ -120,11 +120,13 @@ Les associations gèrent des données de familles, parfois d'enfants. Le projet 
 
 ## Déploiement (Coolify)
 
-Production image: multi-stage `Dockerfile` (Node Vite build → FrankenPHP PHP 8.3).
-Migrations run on container start; uploads live under `UPLOAD_DIR` (mount `/app/var/storage`).
-Health probe: `GET /health`.
+Production image: multi-stage `Dockerfile` (Node Vite build → FrankenPHP **PHP 8.4**, non-root process on **`:8080`**).
+Coolify Traefik terminates TLS; Postgres **18** is a separate Coolify resource; uploads on a named volume at `/app/var/storage`.
+Migrations run on start; health probe: `GET /health`.
 
-See [`docs/coolify.md`](./docs/coolify.md) for the Coolify checklist (env vars, PostgreSQL, volumes, domain).
+**Local DDEV / `symfony serve` are unchanged.**
+
+See [`DEPLOY_COOLIFY.md`](./DEPLOY_COOLIFY.md) and [`.env.prod.example`](./.env.prod.example).
 
 ## Tests
 

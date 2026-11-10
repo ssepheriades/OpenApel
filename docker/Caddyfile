@@ -11,17 +11,17 @@
 	}
 }
 
-{$SERVER_NAME:localhost} {
+# Default :8080 for non-root. Override with SERVER_NAME if needed.
+{$SERVER_NAME::8080} {
 	root * /app/public
 	encode zstd br gzip
 
-	# Security headers (TLS/HSTS is handled by Coolify's proxy; keep app-level CSP + framing).
+	# App-level hardening. HSTS / TLS certs are Coolify Traefik's job.
 	header {
 		X-Content-Type-Options nosniff
 		X-Frame-Options SAMEORIGIN
 		Referrer-Policy strict-origin-when-cross-origin
 		Permissions-Policy "geolocation=(), microphone=(), camera=()"
-		# Tighten CSP further once inline admin assets are audited.
 		Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'"
 		-Server
 	}
