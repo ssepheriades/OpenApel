@@ -1,0 +1,47 @@
+# Optional Compose layout for Coolify (Docker Compose) or local smoke tests.
+# Preferred Coolify mode: Dockerfile build + managed PostgreSQL resource (see docs/coolify-release.md).
+#
+# Coolify Traefik terminates TLS; do not publish host ports for the app service.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: '0'
+      APP_SECRET: ${APP_SECRET}
+      APP_INSTANCE: ${APP_INSTANCE}
+      UPLOAD_DIR: /app/var/storage
+      DATABASE_URL: ${DATABASE_URL}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+      DEFAULT_URI: ${DEFAULT_URI}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-REMOTE_ADDR}
+      SERVER_NAME: ':80'
+      VITE_API_URL: /api
+    volumes:
+      - openapel_uploads:/app/var/storage
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    # Coolify injects networks / labels; for local tests with a linked DB:
+    # depends_on: [database]
+
+  # Example only — prefer Coolify's PostgreSQL service in production.
+  # database:
+  #   image: postgres:17-alpine
+  #   environment:
+  #     POSTGRES_DB: openapel
+  #     POSTGRES_USER: openapel
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   volumes:
+  #     - openapel_pg:/var/lib/postgresql/data
+
+volumes:
+  openapel_uploads:
+  # openapel_pg:

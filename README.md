@@ -118,6 +118,14 @@ Les associations gèrent des données de familles, parfois d'enfants. Le projet 
 
 À la charge de chaque instance : hébergement, mentions légales réelles, et autorisations parentales avant publication de photos d'enfants.
 
+## Déploiement (Coolify)
+
+Production image: multi-stage `Dockerfile` (Node Vite build → FrankenPHP PHP 8.3).
+Migrations run on container start; uploads live under `UPLOAD_DIR` (mount `/app/var/storage`).
+Health probe: `GET /health`.
+
+See [`docs/coolify.md`](./docs/coolify.md) for the Coolify checklist (env vars, PostgreSQL, volumes, domain).
+
 ## Tests
 
 ```bash

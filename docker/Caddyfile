@@ -1,0 +1,32 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+
+	# Coolify Traefik sits in front; trust private / Docker ranges for X-Forwarded-*.
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+{$SERVER_NAME:localhost} {
+	root * /app/public
+	encode zstd br gzip
+
+	# Security headers (TLS/HSTS is handled by Coolify's proxy; keep app-level CSP + framing).
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+		# Tighten CSP further once inline admin assets are audited.
+		Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'"
+		-Server
+	}
+
+	{$CADDY_EXTRA_DIRECTIVES}
+
+	php_server
+}
