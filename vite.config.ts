@@ -4,18 +4,40 @@ import vue from '@vitejs/plugin-vue';
 import vuetify from 'vite-plugin-vuetify';
 import symfonyPlugin from 'vite-plugin-symfony';
 
+const isDdev = Boolean(process.env.DDEV_PRIMARY_URL_WITHOUT_PORT);
+
 export default defineConfig({
     plugins: [
         vue(),
         vuetify({ autoImport: true }),
-        symfonyPlugin(),
+        symfonyPlugin({
+            // localhost: browser → localhost:5173
+            // DDEV: browser → https://openapel.ddev.site:5174
+            viteDevServerHostname: process.env.DDEV_HOSTNAME || 'localhost',
+        }),
     ],
     server: {
-        proxy: {
-            '^(?!/build)': {
-                target: 'http://localhost:8000',
-                changeOrigin: true,
-            },
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        // Required so asset URLs point at the DDEV-exposed Vite HTTPS port.
+        ...(isDdev
+            ? { origin: `${process.env.DDEV_PRIMARY_URL_WITHOUT_PORT}:5174` }
+            : {
+                  proxy: {
+                      '^(?!/build)': {
+                          target: 'http://localhost:8000',
+                          changeOrigin: true,
+                      },
+                  },
+              }),
+        cors: isDdev
+            ? {
+                  origin: /https?:\/\/([A-Za-z0-9\-.]+)?(\.ddev\.site)(?::\d+)?$/,
+              }
+            : true,
+        watch: {
+            usePolling: true,
         },
     },
     resolve: {

@@ -1,0 +1,27 @@
+name: openapel
+type: symfony
+docroot: public
+php_version: "8.3"
+webserver_type: nginx-fpm
+xdebug_enabled: false
+# Keep .env.local for secrets. DB/URLs come from web_environment and override .env in the web container.
+disable_settings_management: true
+additional_hostnames: []
+additional_fqdns: []
+database:
+    type: postgres
+    version: "17"
+use_dns_when_possible: true
+timezone: Europe/Paris
+composer_version: "2"
+web_environment:
+    - DATABASE_URL=postgresql://db:db@db:5432/db?serverVersion=17&charset=utf8
+    - DEFAULT_URI=https://openapel.ddev.site
+    - VITE_PROXY_ORIGIN=http://127.0.0.1:5173
+nodejs_version: "22"
+corepack_enable: false
+
+hooks:
+  post-start:
+    - exec: composer install --prefer-dist --no-progress --no-interaction
+    - exec: bash -c 'test -d node_modules || npm install'

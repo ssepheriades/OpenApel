@@ -82,6 +82,8 @@ class Document
             'application/pdf',
             'application/msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             'application/vnd.ms-excel',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'image/jpeg',
@@ -89,7 +91,7 @@ class Document
             'application/zip',
             'application/x-zip-compressed',
         ],
-        mimeTypesMessage: 'Formats acceptés : PDF, Word, Excel, JPEG, PNG, ZIP.',
+        mimeTypesMessage: 'Formats acceptés : PDF, Word, PowerPoint, Excel, JPEG, PNG, ZIP.',
     )]
     private ?File $file = null;
 

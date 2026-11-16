@@ -1,0 +1,14 @@
+# Vite / Node (merged with config.yaml by DDEV)
+# https://docs.ddev.com/en/stable/users/usage/vite/
+
+web_extra_exposed_ports:
+  - name: vite
+    container_port: 5173
+    http_port: 5172
+    # Host 5173 often taken by Cursor remote port-forward; keep container 5173.
+    https_port: 5174
+
+web_extra_daemons:
+  - name: vite
+    command: bash -c 'test -d node_modules || npm install; npm run dev -- --host'
+    directory: /var/www/html
