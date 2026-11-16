@@ -41,22 +41,32 @@ final class DocumentDownloadPolicyTest extends TestCase
         self::assertTrue($this->policy->allowsDownload('public.pdf', true));
     }
 
-    public function testHiddenDocumentIsDeniedForAnonymous(): void
+    public function testHiddenDocumentIsAllowedForAnyone(): void
     {
         $this->documentRepository->method('findOneByFilename')->with('secret.pdf')->willReturn(
             $this->document(DocumentVisibility::Hidden),
         );
 
-        self::assertFalse($this->policy->allowsDownload('secret.pdf', false));
+        self::assertTrue($this->policy->allowsDownload('secret.pdf', false));
+        self::assertTrue($this->policy->allowsDownload('secret.pdf', true));
     }
 
-    public function testHiddenDocumentIsAllowedForAdmin(): void
+    public function testArchivedDocumentIsDeniedForAnonymous(): void
     {
-        $this->documentRepository->method('findOneByFilename')->with('secret.pdf')->willReturn(
-            $this->document(DocumentVisibility::Hidden),
+        $this->documentRepository->method('findOneByFilename')->with('old.pdf')->willReturn(
+            $this->document(DocumentVisibility::Archived),
         );
 
-        self::assertTrue($this->policy->allowsDownload('secret.pdf', true));
+        self::assertFalse($this->policy->allowsDownload('old.pdf', false));
+    }
+
+    public function testArchivedDocumentIsAllowedForAdmin(): void
+    {
+        $this->documentRepository->method('findOneByFilename')->with('old.pdf')->willReturn(
+            $this->document(DocumentVisibility::Archived),
+        );
+
+        self::assertTrue($this->policy->allowsDownload('old.pdf', true));
     }
 
     private function document(DocumentVisibility $visibility): Document

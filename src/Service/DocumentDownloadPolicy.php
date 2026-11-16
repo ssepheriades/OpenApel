@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Enum\DocumentVisibility;
 use App\Repository\DocumentRepository;
 
 /**
  * Whether GET /media/documents/{filename} may serve the file.
- * Hidden or unknown files 404 for the public; staff with ROLE_ADMIN can still open them.
+ *
+ * Visible and hidden files are downloadable by anyone who has the URL.
+ * Archived, unknown or orphan files 404 for the public; ROLE_ADMIN can still open them.
  */
 final readonly class DocumentDownloadPolicy
 {
@@ -25,7 +26,7 @@ final readonly class DocumentDownloadPolicy
             return false;
         }
 
-        if (DocumentVisibility::Visible === $document->getVisibility()) {
+        if ($document->getVisibility()->isPubliclyDownloadable()) {
             return true;
         }
 

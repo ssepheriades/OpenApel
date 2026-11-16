@@ -50,7 +50,7 @@ final class DocumentCrudController extends AbstractCrudController
         yield AssociationField::new('theme', 'Thème')
             ->autocomplete();
         yield ChoiceField::new('visibility', 'Visibilité')
-            ->setHelp('Masquer retire le document du listing public et bloque le téléchargement, même avec l’ancienne URL.')
+            ->setHelp('Visible : listé et téléchargeable. Masqué : retiré du listing mais téléchargeable via l’URL. Archivé : ni listé ni téléchargeable (sauf admin).')
             ->setChoices(
                 array_combine(
                     array_map(fn (DocumentVisibility $visibility) => $visibility->label(), DocumentVisibility::cases()),

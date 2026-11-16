@@ -264,20 +264,34 @@ final class MediaControllerTest extends WebTestCase
         self::assertStringNotContainsString('public', (string) $response->headers->get('Cache-Control'));
     }
 
-    public function testHiddenDocumentIsNotFoundAnonymously(): void
+    public function testHiddenDocumentIsServedAnonymously(): void
     {
         $this->ensureMediaSchema();
         $this->persistDocument('secret.txt', DocumentVisibility::Hidden);
 
         $this->client->request('GET', '/media/documents/secret.txt');
 
+        self::assertResponseIsSuccessful();
+        $response = $this->client->getResponse();
+        self::assertInstanceOf(BinaryFileResponse::class, $response);
+        self::assertSame('secret-body', file_get_contents($response->getFile()->getPathname()));
+        self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
+    }
+
+    public function testArchivedDocumentIsNotFoundAnonymously(): void
+    {
+        $this->ensureMediaSchema();
+        $this->persistDocument('secret.txt', DocumentVisibility::Archived);
+
+        $this->client->request('GET', '/media/documents/secret.txt');
+
         self::assertResponseStatusCodeSame(404);
     }
 
-    public function testHiddenDocumentIsServedToAdmin(): void
+    public function testArchivedDocumentIsServedToAdmin(): void
     {
         $this->ensureMediaSchema();
-        $this->persistDocument('secret.txt', DocumentVisibility::Hidden);
+        $this->persistDocument('secret.txt', DocumentVisibility::Archived);
         $this->loginAsAdmin();
 
         $this->client->request('GET', '/media/documents/secret.txt');
